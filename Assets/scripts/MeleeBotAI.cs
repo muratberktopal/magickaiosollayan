@@ -66,20 +66,24 @@ public class MeleeBotAI : MonoBehaviour
 
     void FindTarget()
     {
-        // Layer maskesi kullanmadan, etraftaki herkesi tara
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange);
         float closestDist = Mathf.Infinity;
         Transform bestTarget = null;
 
         foreach (Collider hit in hits)
         {
-            // Kendimizi görmeyelim
-            if (hit.transform == transform) continue;
+            // 1. Kendimi hedef almamalıyım (ÇOK ÖNEMLİ)
+            if (hit.gameObject == gameObject) continue;
 
-            // Player veya Enemy tagi var mı?
+            // 2. Canlı mı? (Ölüleri kovalama)
+            if (hit.GetComponent<Health>() == null) continue;
+
+            // 3. Player MI yoksa Başka Bir Düşman MI?
             if (hit.CompareTag("Player") || hit.CompareTag("Enemy"))
             {
                 float d = Vector3.Distance(transform.position, hit.transform.position);
+
+                // En yakındakini seç
                 if (d < closestDist)
                 {
                     closestDist = d;

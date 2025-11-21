@@ -2,35 +2,30 @@ using UnityEngine;
 
 public class SwordDamage : MonoBehaviour
 {
-    public int damage = 20;          // Kaç vuracak?
-    public float knockbackForce = 5f; // Ne kadar geriye uçuracak?
-    public string targetTag = "Enemy"; // Player kýlýcýysa "Enemy", Bot kýlýcýysa "Player"
-    public GameObject owner;         // Kýlýcýn sahibi (Inspector'dan ata veya kod otomatik bulur)
+    public int damage = 20;
+    public float knockbackForce = 5f;
+    public GameObject owner; // Kýlýcýn sahibi
 
     private void Start()
     {
-        // Eðer owner atanmadýysa, kýlýcýn en üstteki sahibini bulmaya çalýþ
+        // Sahibini otomatik bul (Eðer atanmadýysa)
         if (owner == null)
             owner = GetComponentInParent<Rigidbody>()?.gameObject;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Kendi sahibine vurma
+        // 1. Kýlýç sahibine (kendine) çarpýyorsa HÝÇBÝR ÞEY YAPMA
         if (owner != null && other.gameObject == owner) return;
 
-        // Hedeflediðimiz tag'e mi çarptý?
-        if (other.CompareTag(targetTag) || (targetTag == "Actors" && (other.CompareTag("Player") || other.CompareTag("Enemy"))))
-        {
-            // Çarptýðýmýz objede "Health" scripti var mý?
-            Health enemyHealth = other.GetComponent<Health>();
+        // 2. Çarptýðýmýz þeyin caný var mý? (Health scripti var mý?)
+        Health targetHealth = other.GetComponent<Health>();
 
-            if (enemyHealth != null)
-            {
-                // Hasar ver ve geriye it (Sahibinin pozisyonunu yolluyoruz ki zýt yöne itilsin)
-                Vector3 attackerPos = owner != null ? owner.transform.position : transform.position;
-                enemyHealth.TakeDamage(damage, attackerPos, knockbackForce);
-            }
+        if (targetHealth != null)
+        {
+            // VUR! (Tag kontrolünü kaldýrdýk, artýk herkes herkese vurabilir)
+            Vector3 attackerPos = owner != null ? owner.transform.position : transform.position;
+            targetHealth.TakeDamage(damage, attackerPos, knockbackForce);
         }
     }
 }
