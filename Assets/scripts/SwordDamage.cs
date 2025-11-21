@@ -2,23 +2,35 @@ using UnityEngine;
 
 public class SwordDamage : MonoBehaviour
 {
-    public int damage = 20;
-    public string targetTag = "Player"; // Kime vuracak? (Bot için 'Player' veya 'Enemy')
-    public GameObject owner; // Kýlýcý tutan kiþi (Kendine vurmasýn diye)
+    public int damage = 20;          // Kaç vuracak?
+    public float knockbackForce = 5f; // Ne kadar geriye uçuracak?
+    public string targetTag = "Enemy"; // Player kýlýcýysa "Enemy", Bot kýlýcýysa "Player"
+    public GameObject owner;         // Kýlýcýn sahibi (Inspector'dan ata veya kod otomatik bulur)
+
+    private void Start()
+    {
+        // Eðer owner atanmadýysa, kýlýcýn en üstteki sahibini bulmaya çalýþ
+        if (owner == null)
+            owner = GetComponentInParent<Rigidbody>()?.gameObject;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Kýlýç sahibine veya yere deðiyorsa iþlem yapma
-        if (other.gameObject == owner || other.gameObject.layer == LayerMask.NameToLayer("Ground"))
-            return;
+        // Kendi sahibine vurma
+        if (owner != null && other.gameObject == owner) return;
 
-        // Hedeflediðimiz etikete mi çarptý? (Örn: Player veya Enemy)
+        // Hedeflediðimiz tag'e mi çarptý?
         if (other.CompareTag(targetTag) || (targetTag == "Actors" && (other.CompareTag("Player") || other.CompareTag("Enemy"))))
         {
-            Debug.Log(other.name + " isimli objeye Kýlýçla Vuruldu! Hasar: " + damage);
+            // Çarptýðýmýz objede "Health" scripti var mý?
+            Health enemyHealth = other.GetComponent<Health>();
 
-            // ÝLERÝDE CAN SÝSTEMÝ EKLEYÝNCE BURAYI AÇACAKSIN:
-            // other.GetComponent<Health>().TakeDamage(damage);
+            if (enemyHealth != null)
+            {
+                // Hasar ver ve geriye it (Sahibinin pozisyonunu yolluyoruz ki zýt yöne itilsin)
+                Vector3 attackerPos = owner != null ? owner.transform.position : transform.position;
+                enemyHealth.TakeDamage(damage, attackerPos, knockbackForce);
+            }
         }
     }
 }

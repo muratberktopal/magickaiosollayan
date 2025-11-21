@@ -4,187 +4,168 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class MeleeBotAI : MonoBehaviour
 {
-    enum State { Roaming, ChasingLoot, Attacking }
-    State currentState;
+    [Header("Hız ve Hareket")]
+    public float moveSpeed = 4f;
+    public float detectionRange = 10f; // Görme mesafesi
+    public float attackRange = 2.5f;   // Saldırı mesafesi (Kılıç boyuna göre ayarla)
 
-    [Header("Genel Ayarlar")]
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 10f;
+    [Header("Saldırı Ayarları")]
+    public GameObject handObject;      // "Hand" objesini buraya sürükle!
+    public float attackRate = 1.0f;    // Kaç saniyede bir vursun?
+    public float swingSpeed = 0.2f;    // Sallama hızı (Düşükse hızlı sallar)
 
-    [Header("K�l�� Ayarlar�")]
-    public GameObject swordObject;     // Botun elindeki k�l�� objesi
-    public float attackRange = 2.0f;   // Ne kadar yakla��nca vursun? (K�sa mesafe)
-    public float attackRate = 1.0f;    // Saniyede ka� vuru�?
-    public float swingSpeed = 0.2f;    // K�l�c� savurma h�z�
-
-    [Header("Alg�lama")]
-    public float detectionRadius = 10f;
-    public LayerMask targetLayer;
-    public LayerMask lootLayer;
-
+    // Gizli değişkenler
     private Rigidbody rb;
     private Transform currentTarget;
     private float nextAttackTime = 0f;
-    private bool isSwinging = false;   // �u an k�l�� sall�yor mu?
-    private Quaternion defaultSwordRot; // K�l�c�n duru� pozisyonu
+    private bool isSwinging = false;
+    private Quaternion defaultHandRot;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        currentState = State.Roaming;
 
-        if (swordObject != null)
-        {
-            defaultSwordRot = swordObject.transform.localRotation;
-            // K�l�c�n sahibini (kendimizi) tan�tal�m ki bize vurmas�n
-            var damageScript = swordObject.GetComponent<SwordDamage>();
-            if (damageScript) damageScript.owner = this.gameObject;
-        }
+        if (handObject != null)
+            defaultHandRot = handObject.transform.localRotation;
+        else
+            Debug.LogError("HATA: 'Hand Object' kısmına kılıcı tutan boş objeyi atamadın!");
     }
 
     void FixedUpdate()
     {
-        if (isSwinging) return; // K�l�� sallarken hareket etmesin (Opsiyonel)
-
-        DecideState();
-
-        switch (currentState)
+        // Kılıç sallarken hareket etmesin (İstersen burayı silebilirsin)
+        if (isSwinging)
         {
-            case State.Roaming:
-                Patrol();
-                break;
-            case State.ChasingLoot:
-                MoveToTarget();
-                break;
-            case State.Attacking:
-                AttackBehavior();
-                break;
-        }
-    }
-
-    void DecideState()
-    {
-        // Yak�ndaki d��manlar� bul
-        Transform potentialEnemy = FindClosestTarget(targetLayer, "Enemy", "Player");
-
-        // Sald�r� menziline girdiyse
-        if (potentialEnemy != null && Vector3.Distance(transform.position, potentialEnemy.position) <= attackRange)
-        {
-            currentTarget = potentialEnemy;
-            currentState = State.Attacking;
-            return;
-        }
-        // Uzaktaysa ama g�r�yorsa ona do�ru ko�mal� (Chase eklendi)
-        else if (potentialEnemy != null)
-        {
-            currentTarget = potentialEnemy;
-            currentState = State.ChasingLoot; // Loot kovalar gibi d��mana ko�sun
+            rb.linearVelocity = Vector3.zero;
             return;
         }
 
-        // D��man yoksa Loot ara
-        Transform potentialLoot = FindClosestTarget(lootLayer, "Loot");
-        if (potentialLoot != null)
+        FindTarget(); // Hedef Ara
+
+        if (currentTarget != null)
         {
-            currentTarget = potentialLoot;
-            currentState = State.ChasingLoot;
+            float distance = Vector3.Distance(transform.position, currentTarget.position);
+
+            if (distance <= attackRange)
+            {
+                // Menzildeyse -> Saldır
+                Attack();
+            }
+            else
+            {
+                // Uzaktaysa -> Kovala
+                MoveTowards(currentTarget.position);
+            }
         }
         else
         {
-            currentState = State.Roaming;
-            currentTarget = null;
+            // Hedef yoksa -> Olduğu yerde dursun veya devriye gezsin
+            rb.linearVelocity = Vector3.zero;
         }
     }
 
-    void MoveToTarget()
+    void FindTarget()
     {
-        if (currentTarget == null) return;
-        Vector3 direction = (currentTarget.position - transform.position).normalized;
-        Move(direction);
-        LookAt(currentTarget.position);
+        // Layer maskesi kullanmadan, etraftaki herkesi tara
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange);
+        float closestDist = Mathf.Infinity;
+        Transform bestTarget = null;
+
+        foreach (Collider hit in hits)
+        {
+            // Kendimizi görmeyelim
+            if (hit.transform == transform) continue;
+
+            // Player veya Enemy tagi var mı?
+            if (hit.CompareTag("Player") || hit.CompareTag("Enemy"))
+            {
+                float d = Vector3.Distance(transform.position, hit.transform.position);
+                if (d < closestDist)
+                {
+                    closestDist = d;
+                    bestTarget = hit.transform;
+                }
+            }
+        }
+        currentTarget = bestTarget;
     }
 
-    void AttackBehavior()
+    void MoveTowards(Vector3 target)
     {
-        if (currentTarget == null) return;
+        // Yüzünü dön
+        Vector3 lookPos = new Vector3(target.x, transform.position.y, target.z);
+        transform.LookAt(lookPos);
 
-        rb.linearVelocity = Vector3.zero; // Vururken dur
-        LookAt(currentTarget.position);
+        // Yürü
+        Vector3 dir = (target - transform.position).normalized;
+        Vector3 velocity = dir * moveSpeed;
+        velocity.y = rb.linearVelocity.y; // Yerçekimini koru
+        rb.linearVelocity = velocity;
+    }
+
+    void Attack()
+    {
+        // Saldırı anında da hedefe dön (Yoksa boşa sallar)
+        Vector3 lookPos = new Vector3(currentTarget.position.x, transform.position.y, currentTarget.position.z);
+        transform.LookAt(lookPos);
+
+        rb.linearVelocity = Vector3.zero; // Dur
 
         if (Time.time >= nextAttackTime)
         {
-            StartCoroutine(PerformSwordSwing());
+            StartCoroutine(SwingSword());
             nextAttackTime = Time.time + attackRate;
         }
     }
 
-    // K�l�c� Kod ile Sallama Efekti (Animasyonun yoksa bunu kullan)
-    IEnumerator PerformSwordSwing()
+    IEnumerator SwingSword()
     {
         isSwinging = true;
 
-        // 1. Geri �ekil (Haz�rl�k)
-        Quaternion startRot = swordObject.transform.localRotation;
-        Quaternion windupRot = startRot * Quaternion.Euler(0, -45, 0);
-
-        float t = 0;
-        while (t < 1)
+        if (handObject != null)
         {
-            t += Time.deltaTime / (swingSpeed * 0.5f);
-            swordObject.transform.localRotation = Quaternion.Lerp(startRot, windupRot, t);
-            yield return null;
+            // 1. Hazırlık (Geri çekilme)
+            Quaternion startRot = defaultHandRot;
+            Quaternion backRot = startRot * Quaternion.Euler(0, -60, 0); // -60 derece geri
+
+            float t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime / (swingSpeed * 0.5f);
+                handObject.transform.localRotation = Quaternion.Lerp(startRot, backRot, t);
+                yield return null;
+            }
+
+            // 2. Vuruş (İleri savurma)
+            Quaternion hitRot = startRot * Quaternion.Euler(0, 80, 0); // 80 derece ileri
+            t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime / swingSpeed;
+                handObject.transform.localRotation = Quaternion.Lerp(backRot, hitRot, t);
+                yield return null;
+            }
+
+            // 3. Düzelme (Eski yerine dön)
+            t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime / (swingSpeed * 0.5f);
+                handObject.transform.localRotation = Quaternion.Lerp(hitRot, startRot, t);
+                yield return null;
+            }
         }
 
-        // 2. �leri Savur (Vuru�)
-        Quaternion swingRot = startRot * Quaternion.Euler(0, 90, 0); // 90 derece savur
-        t = 0;
-        while (t < 1)
-        {
-            t += Time.deltaTime / swingSpeed;
-            swordObject.transform.localRotation = Quaternion.Lerp(windupRot, swingRot, t);
-            yield return null;
-        }
-
-        // 3. Eski yerine d�n
-        swordObject.transform.localRotation = defaultSwordRot;
         isSwinging = false;
     }
 
-    void Patrol()
+    // Editörde görmen için çizgiler
+    void OnDrawGizmos()
     {
-        Move(transform.forward);
-        if (Random.value < 0.02f) transform.Rotate(0, Random.Range(-90, 90), 0);
-        if (Physics.Raycast(transform.position, transform.forward, 2f)) transform.Rotate(0, 150, 0);
-    }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRange); // Görme alanı
 
-    void Move(Vector3 dir)
-    {
-        Vector3 newVel = dir * moveSpeed;
-        newVel.y = rb.linearVelocity.y;
-        rb.linearVelocity = newVel;
-    }
-
-    void LookAt(Vector3 targetPos)
-    {
-        Vector3 lookPos = new Vector3(targetPos.x, transform.position.y, targetPos.z);
-        transform.LookAt(lookPos);
-    }
-
-    Transform FindClosestTarget(LayerMask mask, params string[] tags)
-    {
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, mask);
-        Transform bestTarget = null;
-        float closestDist = Mathf.Infinity;
-        foreach (Collider hit in hits)
-        {
-            if (hit.transform == transform) continue;
-            bool tagMatch = false;
-            foreach (string t in tags) if (hit.CompareTag(t)) { tagMatch = true; break; }
-            if (!tagMatch) continue;
-
-            float dist = Vector3.Distance(transform.position, hit.transform.position);
-            if (dist < closestDist) { closestDist = dist; bestTarget = hit.transform; }
-        }
-        return bestTarget;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange); // Saldırı alanı
     }
 }
