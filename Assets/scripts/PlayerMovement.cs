@@ -1,41 +1,51 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Animator))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Ayarlar")]
     public float moveSpeed = 5f;
-
-    [Header("Referanslar")]
-    public FixedJoystick joystick; // Unity'de kutucuğa sürüklemeyi unutma!
+    public FixedJoystick joystick; // Joystick'i Inspector'da tekrar atamayı unutma!
 
     private Rigidbody rb;
+    private Animator animator;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        // Animator bileşeni modelin içinde olabilir veya ana objede olabilir.
+        // Bu kod ikisine de bakar.
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
     }
 
     void FixedUpdate()
     {
-        // ÖNEMLİ KISIM:
-        // Joystick'in Y verisini (yukarı/aşağı), 3D dünyadaki Z eksenine (ileri/geri) atıyoruz.
-        // Vector3(x, y, z) -> (Joystick Sağ/Sol, 0, Joystick Yukarı/Aşağı)
-
+        // Joystick verisini al
         Vector3 direction = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
 
-        // Hız vektörünü uygula (Y eksenindeki yer çekimini koruyarak)
+        // Hareketi uygula
         Vector3 newVelocity = direction * moveSpeed;
-
-        // Karakterin düşebilmesi için Y hızını (yerçekimi) bozmuyoruz
-        newVelocity.y = rb.linearVelocity.y;
-
+        newVelocity.y = rb.linearVelocity.y; // Yerçekimini koru
         rb.linearVelocity = newVelocity;
 
-        // Karakteri gittiği yöne döndürme (Opsiyonel ama güzel görünür)
+        // Yönü döndür
         if (direction != Vector3.zero)
         {
-            transform.forward = Vector3.Lerp(transform.forward, direction, 0.15f);
+            // Yumuşak dönme
+            transform.forward = Vector3.Lerp(transform.forward, direction, 0.2f);
+        }
+
+        // --- ANİMASYON KISMI ---
+        if (animator != null)
+        {
+            // Eğer joystick azıcık bile oynatıldıysa (0.1'den büyükse) koşuyordur
+            bool isRunning = direction.magnitude > 0.1f;
+
+            // Animator'daki şalteri indir/kaldır
+            animator.SetBool("IsMoving", isRunning);
         }
     }
 }
