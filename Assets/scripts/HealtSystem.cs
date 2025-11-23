@@ -35,6 +35,9 @@ public class HealthSystem : MonoBehaviour
     // Hasar Alma Fonksiyonu
     public void TakeDamage(int damage, Vector3 attackerPos, float knockbackForce)
     {
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlayHit();
+
         currentHealth -= damage;
 
         // Caný eksiye düþerse 0'da sabitle

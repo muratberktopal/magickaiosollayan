@@ -10,6 +10,22 @@ public class LootItem : MonoBehaviour
 
     void Update()
     {
+        if (isMagnetized && target != null)
+        {
+            // ... hareket kodlarý ...
+
+            if (Vector3.Distance(transform.position, target.position) < 0.5f)
+            {
+                target.GetComponent<LevelSystem>().GainXP(xpAmount);
+
+                // --- SESÝ ÇAL ---
+                if (AudioManager.instance != null)
+                    AudioManager.instance.PlayXP();
+                // ---------------
+
+                Destroy(gameObject);
+            }
+        }
         // Eðer birisi beni çekiyorsa ona doðru uç
         if (isMagnetized && target != null)
         {

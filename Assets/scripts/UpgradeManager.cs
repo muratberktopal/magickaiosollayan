@@ -24,51 +24,39 @@ public class UpgradeManager : MonoBehaviour
 
     public void ShowUpgradeOptions()
     {
-        // 1. KART DESTESÝ KONTROLÜ (En sýk yapýlan hata)
-        if (allUpgrades == null || allUpgrades.Count == 0)
-        {
-            Debug.LogError("HATA: 'All Upgrades' listesi boþ! Project panelinden oluþturduðun kartlarý buraya sürüklemedin.");
-            return;
-        }
+        if (allUpgrades == null || allUpgrades.Count == 0) return;
 
         Time.timeScale = 0;
         levelUpPanel.SetActive(true);
 
-        // Döngüye giriyoruz
+        Debug.Log("Panel Açýldý. Butonlarý baðlamaya baþlýyorum..."); // KONTROL 1
+
         for (int i = 0; i < cardButtons.Length; i++)
         {
-            // --- GÜVENLÝK KONTROLÜ (Crash Önleyici) ---
-            // Eðer listelerden biri eksikse, döngüyü kýrma, o kýsmý atla ve hatayý söyle.
+            // Butonun kendisi var mý?
+            if (cardButtons[i] == null)
+            {
+                Debug.LogError("HATA: " + i + ". Buton kutusu boþ! Inspector'dan ata.");
+                continue;
+            }
 
-            if (i >= nameTexts.Length)
-            {
-                Debug.LogError("HATA: 'Name Texts' listesi eksik! Buton sayýsý kadar eleman yok. Sýra: " + i);
-                continue;
-            }
-            if (i >= descTexts.Length)
-            {
-                Debug.LogError("HATA: 'Desc Texts' listesi eksik! Sýra: " + i);
-                continue;
-            }
-            if (i >= iconImages.Length)
-            {
-                Debug.LogError("HATA: 'Icon Images' listesi eksik! Sýra: " + i);
-                continue;
-            }
-            // ------------------------------------------
-
-            // Rastgele Kart Seç
             int randomIndex = Random.Range(0, allUpgrades.Count);
             UpgradeData randomCard = allUpgrades[randomIndex];
 
-            // UI Doldur
+            // UI Doldur (Textler vs.)
             if (nameTexts[i] != null) nameTexts[i].text = randomCard.upgradeName;
-            if (descTexts[i] != null) descTexts[i].text = randomCard.description;
-            if (iconImages[i] != null && randomCard.icon != null) iconImages[i].sprite = randomCard.icon;
+            // ... diðer doldurmalar ...
 
-            // Týklama Olayý
+            // --- TIKLAMA BAÐLANTISI ---
             cardButtons[i].onClick.RemoveAllListeners();
-            cardButtons[i].onClick.AddListener(() => ApplyUpgrade(randomCard));
+
+            // Lambda (Týklama Emri)
+            cardButtons[i].onClick.AddListener(() => {
+                Debug.Log("Týklama Algýlandý! Kart: " + randomCard.upgradeName); // KONTROL 2
+                ApplyUpgrade(randomCard);
+            });
+
+            Debug.Log("Buton " + i + " baþarýyla baðlandý."); // KONTROL 3
         }
     }
 

@@ -26,6 +26,9 @@ public class LevelSystem : MonoBehaviour
     {
         currentLevel++;
 
+        if (AudioManager.instance != null)
+            AudioManager.instance.PlayLevelUp();
+
         // Fazla XP'yi sýfýrla (Basit yöntem)
         // Ýstersen artan XP'yi bir sonraki levele devredebilirsin: currentXP -= xpToNextLevel;
         currentXP = 0;

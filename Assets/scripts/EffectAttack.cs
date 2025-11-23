@@ -30,6 +30,17 @@ public class EffectAttack : MonoBehaviour
         if (Time.time >= nextAttackTime)
         {
             SpawnSlash();
+
+            // --- SESÝ ÇAL ---
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlayAttack();
+            // ---------------
+
+            nextAttackTime = Time.time + attackRate;
+        }
+        if (Time.time >= nextAttackTime)
+        {
+            SpawnSlash();
             nextAttackTime = Time.time + attackRate;
         }
     }

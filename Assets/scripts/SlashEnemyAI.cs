@@ -140,6 +140,19 @@ public class SlashEnemyAI : MonoBehaviour
         if (currentTarget != null)
             LookAt(currentTarget.position);
 
+        // --- DÜZELTİLEN KISIM ---
+        // Mesafe kontrolünü kaldırdık, kesin çalışsın.
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlayAttack();
+        }
+        else
+        {
+            // Eğer ses çıkmıyorsa konsola hata yazsın ki anlayalım
+            Debug.LogError("Ses Yöneticisi (AudioManager) bulunamadı!");
+        }
+        // ------------------------
+
         if (slashPrefab != null && firePoint != null)
         {
             Quaternion rotasyon = Quaternion.Euler(90, transform.eulerAngles.y, 0);
@@ -148,7 +161,7 @@ public class SlashEnemyAI : MonoBehaviour
             SimpleWeapon weapon = slash.GetComponent<SimpleWeapon>();
             if (weapon != null)
             {
-                weapon.owner = this.gameObject; // Sahibi benim, bana vurma
+                weapon.owner = this.gameObject;
                 weapon.damage = 10;
             }
             Destroy(slash, 0.3f);
