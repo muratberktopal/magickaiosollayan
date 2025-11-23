@@ -10,7 +10,7 @@ public class WeaponSelector : MonoBehaviour
     [Header("Player Silah Kodlarý")]
     public EffectAttack slashScript;       // Kýlýç Kodu
     public PlayerSpearController spearScript; // Mýzrak Kodu
-
+    public PlayerClubController clubScript; //anet was here
     void Start()
     {
         // 1. Oyunu Dondur
@@ -20,6 +20,7 @@ public class WeaponSelector : MonoBehaviour
         // 2. Her ihtimale karþý silahlarý kapalý baþlat
         slashScript.enabled = false;
         spearScript.enabled = false;
+        clubScript.enabled = false;
     }
 
     // Sol Kutuyu Seçince
@@ -47,6 +48,22 @@ public class WeaponSelector : MonoBehaviour
 
         StartGame();
     }
+
+    // Yeni Kutuyu Seçince
+    public void SelectClub() // UI butonuna bu fonksiyonu baðlayýn
+    {
+        // Sopa kodunu aç
+        clubScript.enabled = true;
+
+        // Diðerlerini kapatmanýza gerek yok çünkü Start'ta zaten kapalý
+        // Saldýrý butonunu SOPA koduna baðla
+        gameAttackButton.onClick.RemoveAllListeners();
+        gameAttackButton.onClick.AddListener(() => clubScript.PerformAttack());
+
+        StartGame();
+    }
+
+
 
     void StartGame()
     {
