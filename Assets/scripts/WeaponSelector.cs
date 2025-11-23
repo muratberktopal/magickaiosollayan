@@ -5,69 +5,62 @@ public class WeaponSelector : MonoBehaviour
 {
     [Header("UI Elemanlarý")]
     public GameObject selectionPanel; // Açýlýþta çýkan panel
-    public Button gameAttackButton;   // Oyun içindeki (Sað alttaki) saldýrý butonu
+    public Button gameAttackButton;   // Oyun içindeki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
-    public EffectAttack slashScript;       // Kýlýç Kodu
-    public PlayerSpearController spearScript; // Mýzrak Kodu
-    public PlayerClubController clubScript; //anet was here
+    public EffectAttack slashScript;          // Kýlýç
+    public PlayerClubController clubScript;   // Sopa (Balyoz)
+    public PlayerRopeController ropeScript;   // <-- YENÝ: Ýp (Kýrbaç)
+
+    // Mýzrak scripti burada dursun ama panelden seçtirmeyeceðiz (Ýlerde kartlardan çýkacak)
+    public PlayerSpearController spearScript;
+
     void Start()
     {
         // 1. Oyunu Dondur
         Time.timeScale = 0;
         selectionPanel.SetActive(true);
 
-        // 2. Her ihtimale karþý silahlarý kapalý baþlat
+        // 2. Tüm silahlarý kapalý baþlat
         slashScript.enabled = false;
-        spearScript.enabled = false;
         clubScript.enabled = false;
+        ropeScript.enabled = false;
+        spearScript.enabled = false;
     }
 
-    // Sol Kutuyu Seçince
+    // 1. Buton: KILIÇ
     public void SelectSlash()
     {
-        // Kýlýç kodunu aç
         slashScript.enabled = true;
-
-        // Saldýrý butonunu KILIÇ koduna baðla (Otomatik Kablolama)
-        gameAttackButton.onClick.RemoveAllListeners(); // Eski baðlantýyý sil
-        gameAttackButton.onClick.AddListener(() => slashScript.PerformAttack());
-
+        SetAttackButton(() => slashScript.PerformAttack());
         StartGame();
     }
 
-    // Sað Kutuyu Seçince
-    public void SelectSpear()
+    // 2. Buton: SOPA
+    public void SelectClub()
     {
-        // Mýzrak kodunu aç
-        spearScript.enabled = true;
-
-        // Saldýrý butonunu MIZRAK koduna baðla
-        gameAttackButton.onClick.RemoveAllListeners();
-        gameAttackButton.onClick.AddListener(() => spearScript.Attack());
-
-        StartGame();
-    }
-
-    // Yeni Kutuyu Seçince
-    public void SelectClub() // UI butonuna bu fonksiyonu baðlayýn
-    {
-        // Sopa kodunu aç
         clubScript.enabled = true;
-
-        // Diðerlerini kapatmanýza gerek yok çünkü Start'ta zaten kapalý
-        // Saldýrý butonunu SOPA koduna baðla
-        gameAttackButton.onClick.RemoveAllListeners();
-        gameAttackButton.onClick.AddListener(() => clubScript.PerformAttack());
-
+        SetAttackButton(() => clubScript.PerformAttack());
         StartGame();
     }
 
+    // 3. Buton: ÝP (Eski Mýzrak Butonu buna baðlanacak)
+    public void SelectRope()
+    {
+        ropeScript.enabled = true;
+        SetAttackButton(() => ropeScript.PerformAttack());
+        StartGame();
+    }
 
+    // Yardýmcý Fonksiyon: Buton baðlama iþini kýsaltýr
+    void SetAttackButton(UnityEngine.Events.UnityAction action)
+    {
+        gameAttackButton.onClick.RemoveAllListeners();
+        gameAttackButton.onClick.AddListener(action);
+    }
 
     void StartGame()
     {
-        // Paneli kapat ve zamaný baþlat
         selectionPanel.SetActive(false);
         Time.timeScale = 1;
     }
