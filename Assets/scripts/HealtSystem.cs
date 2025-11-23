@@ -1,56 +1,95 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI; // UI (Image) için gerekli
 
 public class HealthSystem : MonoBehaviour
 {
-    [Header("Ayarlar")]
+    [Header("Can Ayarlarý")]
     public int maxHealth = 100;
-    public bool destroyOnDeath = true;
+    public int currentHealth; // Inspector'da anlýk görmek için public yaptým
+    public bool destroyOnDeath = true; // Düþmanlar için TRUE, Player için FALSE olsun
 
-    [Header("Referanslar (BURAYI DOLDUR!)")]
-    public Image healthBarFill; // <--- Burasý artýk elle doldurulacak!
-    public GameObject healthCanvas; // <--- Canvas'ý da elle atayalým
+    [Header("UI Referanslarý (Elle Sürükle!)")]
+    public Image healthBarFill;   // Yeþil dolan bar
+    public GameObject healthCanvas; // Kafasýnýn üstündeki Canvas objesi
 
-    private int currentHealth;
     private Camera mainCam;
 
     void Start()
     {
         currentHealth = maxHealth;
         mainCam = Camera.main;
+
         UpdateUI();
     }
 
     void LateUpdate()
     {
-        // Canvas kameraya baksýn
+        // Can barýnýn sürekli kameraya bakmasý (Billboard Effect)
         if (healthCanvas != null && mainCam != null)
         {
-            healthCanvas.transform.LookAt(transform.position + mainCam.transform.rotation * Vector3.forward, mainCam.transform.rotation * Vector3.up);
+            // Kameranýn baktýðý yöne doðru çeviriyoruz
+            healthCanvas.transform.LookAt(transform.position + mainCam.transform.forward);
         }
     }
 
+    // Hasar Alma Fonksiyonu
     public void TakeDamage(int damage, Vector3 attackerPos, float knockbackForce)
     {
         currentHealth -= damage;
 
-        // Debug satýrý ekledim: Hasar alýyor mu görelim
-        // Debug.Log("Can Azaldý! Kalan: " + currentHealth);
+        // Caný eksiye düþerse 0'da sabitle
+        if (currentHealth < 0) currentHealth = 0;
 
         UpdateUI();
 
+        // --- GERÝ TEPME (KNOCKBACK) ---
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
             Vector3 dir = (transform.position - attackerPos).normalized;
-            dir.y = 0;
+            dir.y = 0; // Havaya uçmasýn, sadece geriye gitsin
             rb.AddForce(dir * knockbackForce, ForceMode.Impulse);
         }
 
+        // --- ÖLÜM KONTROLÜ ---
         if (currentHealth <= 0)
         {
-            if (destroyOnDeath) Destroy(gameObject);
-            else gameObject.SetActive(false);
+            Die();
+        }
+    }
+
+    // Ýyileþme (Can Artýrma) - Level Atlayýnca kullanýrýz
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        UpdateUI();
+    }
+
+    // Eksik olan o meþhur fonksiyon :)
+    void Die()
+    {
+        // 1. LOOT DÜÞÜRME (Eðer LootDropper scripti varsa çalýþtýr)
+        LootDropper looter = GetComponent<LootDropper>();
+        if (looter != null)
+        {
+            looter.DropLoot();
+        }
+
+        // 2. ÖLÜM ÝÞLEMÝ
+        if (destroyOnDeath)
+        {
+            // Bu bir Düþmansa yok et
+            Destroy(gameObject);
+        }
+        else
+        {
+            // Bu bir Playersa oyunu bitir veya karakteri kapat
+            Debug.Log("OYUN BÝTTÝ! PLAYER ÖLDÜ.");
+
+            // Buraya ilerde "Game Over Paneli Aç" kodu gelecek
+            // Þimdilik sadece karakteri gizliyoruz:
+            gameObject.SetActive(false);
         }
     }
 
@@ -58,13 +97,9 @@ public class HealthSystem : MonoBehaviour
     {
         if (healthBarFill != null)
         {
-            // Matematik hatasýný önlemek için float'a çeviriyoruz
-            float oran = (float)currentHealth / maxHealth;
-            healthBarFill.fillAmount = oran;
-        }
-        else
-        {
-            Debug.LogError("HATA: Health Bar Fill (Yeþil Resim) kutusu boþ! Sürüklemedin!");
+            // Matematik iþlemi (0 ile 1 arasý oran)
+            float fillAmount = (float)currentHealth / maxHealth;
+            healthBarFill.fillAmount = fillAmount;
         }
     }
 }

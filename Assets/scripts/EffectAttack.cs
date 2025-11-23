@@ -3,19 +3,30 @@ using UnityEngine;
 public class EffectAttack : MonoBehaviour
 {
     [Header("Gerekli Parçalar")]
-    public GameObject slashPrefab; // Oluþturulacak Efekt (Prefab)
-    public Transform firePoint;    // Nerede çýkacak? (FirePoint)
+    public GameObject slashPrefab;
+    public Transform firePoint;
 
     [Header("Ayarlar")]
-    public float attackRate = 0.5f; // Saniyede kaç vuruþ?
-    public float effectLifeTime = 0.2f; // Efekt kaç saniye ekranda kalsýn? (Çok kýsa olmalý)
+    public float attackRate = 0.5f;
+    public float effectLifeTime = 0.2f;
 
     private float nextAttackTime = 0f;
 
-    // Butona baðlayacaðýmýz fonksiyon
+    // Her karede klavyeyi dinlememiz lazým, o yüzden Update kullanýyoruz
+    void Update()
+    {
+        // BÝLGÝSAYAR ÝÇÝN EKLEME: Space tuþuna basýldý mý?
+#if UNITY_EDITOR || UNITY_STANDALONE
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PerformAttack();
+        }
+#endif
+    }
+
+    // Butona ve Klavyeye baðlý ortak fonksiyon
     public void PerformAttack()
     {
-        // Zamaný geldi mi?
         if (Time.time >= nextAttackTime)
         {
             SpawnSlash();
@@ -27,26 +38,17 @@ public class EffectAttack : MonoBehaviour
     {
         if (slashPrefab == null || firePoint == null) return;
 
-        // --- ÝÞTE SÝHÝRLÝ SATIR ---
-        // Efektin açýsýný oluþturuyoruz:
-        // X = 90 (Yere yatýr)
-        // Y = transform.eulerAngles.y (Karakterin baktýðý yöne çevir)
-        // Z = 0 (Yan yatmasýn)
+        // Efekti yatay oluþtur
         Quaternion rotasyon = Quaternion.Euler(90, transform.eulerAngles.y, 0);
-
-        // 1. Efekti FirePoint noktasýnda, YENÝ ROTASYON ile oluþtur
         GameObject currentSlash = Instantiate(slashPrefab, firePoint.position, rotasyon);
 
-        // --------------------------
-
-        // Hasar Scriptine "Bunun sahibi benim, bana vurma" de.
+        // Sahibini ata
         SimpleWeapon weaponScript = currentSlash.GetComponent<SimpleWeapon>();
         if (weaponScript != null)
         {
             weaponScript.owner = this.gameObject;
         }
 
-        // 3. Efekti belirli bir süre sonra yok et
         Destroy(currentSlash, effectLifeTime);
     }
 }
