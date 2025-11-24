@@ -8,6 +8,7 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerBowController bowScript;
     public EffectAttack slashScript;          // Kýlýç (Slash)
     public PlayerSpearController spearScript; // Mýzrak (Spear)
     public PlayerMagicCaster magicScript;     // Büyü (Magic)
@@ -23,7 +24,11 @@ public class WeaponSelector : MonoBehaviour
     }
 
     // --- SEÇÝM FONKSÝYONLARI ---
-
+    public void SelectBow()
+    {
+        EnableWeapon(bowScript);
+        SetButtonListener(() => bowScript.Attack());
+    }
     public void SelectSlash() // KILIÇ
     {
         EnableWeapon(slashScript);
@@ -56,6 +61,7 @@ public class WeaponSelector : MonoBehaviour
         if (spearScript) spearScript.enabled = false;
         if (magicScript) magicScript.enabled = false;
         if (clubScript) clubScript.enabled = false;
+        if (bowScript) bowScript.enabled = false;
     }
 
     void EnableWeapon(MonoBehaviour script)

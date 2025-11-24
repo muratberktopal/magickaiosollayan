@@ -10,14 +10,11 @@ public class FireballProjectile : MonoBehaviour
 
     void Start()
     {
-
-
         if (Time.timeScale == 0)
         {
             Debug.LogError("OYUNUN ZAMANI DURMUŞ! O yüzden gitmiyormuş. Şimdi başlattım.");
             Time.timeScale = 1;
         }
-
         // Süre dolunca yok et
         Destroy(gameObject, lifeTime);
     }
