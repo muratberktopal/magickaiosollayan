@@ -6,35 +6,55 @@ public class SimpleWeapon : MonoBehaviour
     public int damage = 20;
     public float knockback = 5f;
 
-    [Header("Sahibi (Otomatik Bulur)")]
+    [Header("Sahibi")]
     public GameObject owner;
 
     void Start()
     {
-        // Kýlýç kimin elindeyse (En üstteki objeyi bul) onu sahibi yap
+        // Sahibi otomatik bul
         if (owner == null)
         {
-            owner = GetComponentInParent<Rigidbody>()?.gameObject;
+            Rigidbody parentRb = GetComponentInParent<Rigidbody>();
+            if (parentRb != null) owner = parentRb.gameObject;
         }
+
+        // KONTROL 1: Silah doðduðunda gücü var mý?
+        Debug.Log($"SÝLAH DOÐDU: {gameObject.name} | Hasar Gücü: {damage} | Sahibi: {(owner != null ? owner.name : "YOK")}");
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // 1. Kendi sahibine vurma
-        if (owner != null && other.gameObject == owner) return;
+        // KONTROL 2: Bir þeye deðiyor mu?
+        Debug.Log($"TEMAS VAR: '{gameObject.name}' -> '{other.name}' objesine deðdi.");
 
-        // 2. Çarptýðýmýz þeyde "HealthSystem" var mý?
+        if (owner != null)
+        {
+            // Kendi sahibine mi deðdi?
+            if (other.gameObject == owner || other.transform.IsChildOf(owner.transform))
+            {
+                // Debug.Log("ÝPTAL: Kendi sahibine deðdi.");
+                return;
+            }
+        }
+
+        // HealthSystem arýyoruz
         HealthSystem target = other.GetComponent<HealthSystem>();
+        if (target == null) target = other.GetComponentInParent<HealthSystem>();
 
         if (target != null)
         {
-            // Sahibinin pozisyonunu yolla ki o yönden itilsin
-            Vector3 sourcePos = owner != null ? owner.transform.position : transform.position;
+            // KONTROL 3: Hedef bulundu, vuruyoruz!
+            Debug.Log($"VURUÞ YAPILIYOR! Hedef: {target.name}, Vurulan Hasar: {damage}");
+
+            Vector3 sourcePos = transform.position;
+            if (owner != null) sourcePos = owner.transform.position;
 
             target.TakeDamage(damage, sourcePos, knockback);
-
-            // Vurduðumuzun ismini yaz (Test için)
-            // Debug.Log(owner.name + ", " + other.name + " isimli objeye vurdu!");
+        }
+        else
+        {
+            // KONTROL 4: Deðdik ama caný yok
+            Debug.LogWarning($"HATA: '{other.name}' objesinde 'HealthSystem' scripti bulunamadý!");
         }
     }
 }

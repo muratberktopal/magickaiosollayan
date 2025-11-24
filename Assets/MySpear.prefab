@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1082092469336459185}
   - component: {fileID: 1208326737442130196}
   - component: {fileID: 2889914977996280225}
+  - component: {fileID: 6107429623823636288}
   m_Layer: 0
   m_Name: MySpear
   m_TagString: Untagged
@@ -128,6 +129,21 @@ MonoBehaviour:
   damage: 35
   lifeTime: 0.3
   knockback: 8
+  owner: {fileID: 0}
+--- !u!114 &6107429623823636288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161950122351401764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d31da4de97bd654584a92a0ab0759ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleWeapon
+  damage: 20
+  knockback: 5
   owner: {fileID: 0}
 --- !u!1001 &5828905518037566233
 PrefabInstance:

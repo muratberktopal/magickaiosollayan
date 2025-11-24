@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3053600421709336414}
   - component: {fileID: 455049211492142098}
   - component: {fileID: 672969184067877168}
+  - component: {fileID: 5043769344452687937}
   m_Layer: 0
   m_Name: MagicBall
   m_TagString: Untagged
@@ -267,3 +268,18 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &5043769344452687937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5954177955937732044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d31da4de97bd654584a92a0ab0759ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleWeapon
+  damage: 30
+  knockback: 5
+  owner: {fileID: 0}

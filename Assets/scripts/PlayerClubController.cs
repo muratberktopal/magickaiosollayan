@@ -40,8 +40,8 @@ public class PlayerClubController : MonoBehaviour
         if (AudioManager.instance != null) AudioManager.instance.PlayClub();
         if (clubPrefab == null) return;
 
-        // Karakterin önünde oluþtur
-        Vector3 spawnPos = transform.position + (Vector3.up * spawnHeight) + (transform.forward * forwardOffset);
+        // Pozisyon: Biraz yukarýda ve önde
+        Vector3 spawnPos = transform.position + (Vector3.up * 0.5f) + (transform.forward * 0.0f);
 
         // Sopayý oluþtur
         GameObject club = Instantiate(clubPrefab, spawnPos, transform.rotation);
