@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65109509133cbf14ab7b79db23f5f870, type: 3}
+  m_Name: canciger
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
+  upgradeName: yemek vakti!
+  description: canartio
+  icon: {fileID: 21300000, guid: a495e7a5a454d5c4889fa880c65afb3e, type: 3}
+  upgradeType: 0
+  value: 3434

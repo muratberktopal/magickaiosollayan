@@ -29,34 +29,36 @@ public class UpgradeManager : MonoBehaviour
         Time.timeScale = 0;
         levelUpPanel.SetActive(true);
 
-        Debug.Log("Panel Açýldý. Butonlarý baðlamaya baþlýyorum..."); // KONTROL 1
-
         for (int i = 0; i < cardButtons.Length; i++)
         {
             // Butonun kendisi var mý?
-            if (cardButtons[i] == null)
-            {
-                Debug.LogError("HATA: " + i + ". Buton kutusu boþ! Inspector'dan ata.");
-                continue;
-            }
+            if (cardButtons[i] == null) continue;
 
+            // Rastgele kart seçimi
             int randomIndex = Random.Range(0, allUpgrades.Count);
             UpgradeData randomCard = allUpgrades[randomIndex];
 
-            // UI Doldur (Textler vs.)
-            if (nameTexts[i] != null) nameTexts[i].text = randomCard.upgradeName;
-            // ... diðer doldurmalar ...
+            // --- EKSÝK OLAN KISIMLAR BURASIYDI ---
 
-            // --- TIKLAMA BAÐLANTISI ---
+            // 1. Ýsim Doldur
+            if (nameTexts.Length > i && nameTexts[i] != null)
+                nameTexts[i].text = randomCard.upgradeName;
+
+            // 2. Açýklama Doldur (BURASI EKSÝKTÝ)
+            if (descTexts.Length > i && descTexts[i] != null)
+                descTexts[i].text = randomCard.description;
+
+            // 3. Ýkon Doldur (BURASI EKSÝKTÝ)
+            if (iconImages.Length > i && iconImages[i] != null)
+                iconImages[i].sprite = randomCard.icon;
+
+            // --------------------------------------
+
+            // Týklama Baðlantýsý
             cardButtons[i].onClick.RemoveAllListeners();
-
-            // Lambda (Týklama Emri)
             cardButtons[i].onClick.AddListener(() => {
-                Debug.Log("Týklama Algýlandý! Kart: " + randomCard.upgradeName); // KONTROL 2
                 ApplyUpgrade(randomCard);
             });
-
-            Debug.Log("Buton " + i + " baþarýyla baðlandý."); // KONTROL 3
         }
     }
 
