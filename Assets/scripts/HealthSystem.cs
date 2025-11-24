@@ -6,11 +6,11 @@ public class HealthSystem : MonoBehaviour
     [Header("Can Ayarlarý")]
     public int maxHealth = 100;
     public int currentHealth;
-    public bool destroyOnDeath = true; // Düþmanlar için TRUE yap
+    public bool destroyOnDeath = true;
 
     [Header("UI Referanslarý")]
-    public Image healthBarFill; // Yeþil bar
-    public GameObject healthCanvas; // Barýn olduðu Canvas
+    public Image healthBarFill;
+    public GameObject healthCanvas;
 
     private Camera mainCam;
 
@@ -23,45 +23,54 @@ public class HealthSystem : MonoBehaviour
 
     void LateUpdate()
     {
-        // Can barý kameraya baksýn
         if (healthCanvas != null && mainCam != null)
         {
             healthCanvas.transform.LookAt(transform.position + mainCam.transform.forward);
         }
     }
 
-    // --- HASAR ALMA FONKSÝYONU ---
     public void TakeDamage(int damage, Vector3 attackerPos, float knockbackForce)
     {
-        // 1. Can Azalt
+        // 1. CANI AZALT
         currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
 
-        // 2. Ekrana Yazý Çýkar (Floating Text)
-        if (FloatingTextManager.instance != null)
+        // 2. HASAR YAZISI (Hata Çýkarsa Yoksay ve Devam Et)
+        try
         {
-            FloatingTextManager.instance.ShowDamage(damage, transform.position);
+            if (FloatingTextManager.instance != null)
+            {
+                FloatingTextManager.instance.ShowDamage(damage, transform.position);
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Hasar Yazýsý Hatasý (Önemli Deðil): " + e.Message);
         }
 
-        // 3. UI Güncelle
-        UpdateUI();
+        // 3. UI GÜNCELLE
+        try
+        {
+            if (healthBarFill != null) UpdateUI();
+        }
+        catch (System.Exception) { }
 
-        // 4. Geri Tepme (Fizik)
+        // 4. GERÝ TEPME
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
             Vector3 dir = (transform.position - attackerPos).normalized;
-            dir.y = 0; // Havaya uçmasýn
+            dir.y = 0;
             rb.AddForce(dir * knockbackForce, ForceMode.Impulse);
         }
 
-        // 5. Ölüm Kontrolü
+        // 5. ÖLÜM KONTROLÜ
         if (currentHealth <= 0)
         {
             Die();
         }
     }
 
-    // --- ÝYÝLEÞME (Kart seçince vs.) ---
     public void Heal(int amount)
     {
         currentHealth += amount;
@@ -69,34 +78,38 @@ public class HealthSystem : MonoBehaviour
         UpdateUI();
     }
 
-    // --- ÖLÜM ---
     void Die()
     {
-        // XP Taþý Düþür
-        LootDropper looter = GetComponent<LootDropper>();
-        if (looter != null) looter.DropLoot();
+        Debug.Log(gameObject.name + " ÖLÜYOR...");
 
+        // --- LOOT KISMI (Hata Çýkarsa Yoksay) ---
+        try
+        {
+            LootDropper looter = GetComponent<LootDropper>();
+            if (looter != null) looter.DropLoot();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Loot Düþürme Hatasý: " + e.Message);
+        }
+        // ---------------------------------------
+
+        // --- ÖLÜM KISMI (KESÝN ÇALIÞACAK) ---
         if (destroyOnDeath)
         {
-            // Düþmansa yok et
-            Destroy(gameObject);
+            Destroy(gameObject); // Düþmansa YOK ET
         }
         else
         {
-            // Playersa Game Over ekranýný aç
-            if (GameOverManager.instance != null)
-                GameOverManager.instance.TriggerGameOver();
-
-            gameObject.SetActive(false); // Karakteri gizle
+            // Playersa Game Over
+            if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
+            gameObject.SetActive(false);
         }
     }
 
     void UpdateUI()
     {
-        if (healthBarFill != null)
-        {
-            float fillAmount = (float)currentHealth / maxHealth;
-            healthBarFill.fillAmount = fillAmount;
-        }
+        float fillAmount = (float)currentHealth / maxHealth;
+        healthBarFill.fillAmount = fillAmount;
     }
 }
