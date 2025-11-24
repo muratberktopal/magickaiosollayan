@@ -9,19 +9,25 @@ public class SlashEnemyAI : MonoBehaviour
     public float wanderSpeed = 2f;
 
     [Header("Mesafe Ayarları")]
-    public float detectionRange = 10f;  // Kimi görecek?
+    public float detectionRange = 10f;
     public float attackRange = 2.5f;
     public float patrolRange = 6f;
 
-    [Header("Saldırı")]
+    [Header("Saldırı Ayarları")]
     public GameObject slashPrefab;
     public Transform firePoint;
     public float cooldownTime = 2f;
 
+    // --- YENİ EKLENEN KISIM (HASAR AYARLARI) ---
+    [Header("Güç Ayarları (Buradan Değiştir)")]
+    public int damageAmount = 10;     // Kaç vuracak?
+    public float knockbackForce = 5f; // Ne kadar itecek?
+    // -------------------------------------------
+
     // Gizli Değişkenler
     private Rigidbody rb;
     private Animator animator;
-    private Transform currentTarget; // O anki hedef (Player veya Enemy olabilir)
+    private Transform currentTarget;
 
     private bool isCoolingDown = false;
     private float cooldownTimer = 0f;
@@ -31,8 +37,6 @@ public class SlashEnemyAI : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-
-        // Animator yoksa çocuklarda ara
         if (animator == null) animator = GetComponentInChildren<Animator>();
 
         PickRandomPoint();
@@ -40,130 +44,67 @@ public class SlashEnemyAI : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 1. ANİMASYON KONTROLÜ
+        // Animasyon
         bool isMoving = rb.linearVelocity.magnitude > 0.1f;
         if (animator != null) animator.SetBool("IsMoving", isMoving);
 
-        // 2. HEDEF TARAMA (En yakındaki kurbanı bul)
+        // Hedef Bul
         FindClosestTarget();
 
-        // 3. KARAR MEKANİZMASI
+        // Davranış
         if (isCoolingDown)
         {
-            // Saldırı sonrası dinlenme
             CooldownLogic();
         }
         else if (currentTarget != null)
         {
-            // Hedef varsa -> SAVAŞ MODU
             float dist = Vector3.Distance(transform.position, currentTarget.position);
-            CombatLogic(dist);
-        }
-        else
-        {
-            // Hedef yoksa -> SERSERİ MODU
-            WanderBehavior();
-        }
-    }
 
-    // --- YENİ HEDEF BULMA SİSTEMİ ---
-    void FindClosestTarget()
-    {
-        // Etraftaki herkesi tara (Detection Range içindekileri)
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange);
-
-        float closestDist = Mathf.Infinity;
-        Transform bestTarget = null;
-
-        foreach (Collider hit in hits)
-        {
-            // 1. Kendimi hedef alamam
-            if (hit.gameObject == gameObject) continue;
-
-            // 2. Ölüleri hedef alamam (HealthSystem'i yoksa geç)
-            if (hit.GetComponent<HealthSystem>() == null) continue;
-
-            // 3. Player MI yoksa Başka Düşman MI?
-            if (hit.CompareTag("Player") || hit.CompareTag("Enemy"))
+            if (dist <= attackRange)
             {
-                float d = Vector3.Distance(transform.position, hit.transform.position);
-
-                // En yakındakini seç
-                if (d < closestDist)
-                {
-                    closestDist = d;
-                    bestTarget = hit.transform;
-                }
+                PerformSlashAttack();
+            }
+            else
+            {
+                MoveTo(currentTarget.position, moveSpeed);
             }
         }
-        // Hedefi güncelle
-        currentTarget = bestTarget;
-    }
-
-    void CombatLogic(float distance)
-    {
-        if (distance <= attackRange)
-        {
-            PerformSlashAttack();
-        }
         else
         {
-            MoveTo(currentTarget.position, moveSpeed);
-        }
-    }
-
-    void WanderBehavior()
-    {
-        MoveTo(wanderPoint, wanderSpeed);
-
-        if (Vector3.Distance(transform.position, wanderPoint) < 1f)
-        {
-            PickRandomPoint();
-        }
-    }
-
-    void CooldownLogic()
-    {
-        cooldownTimer -= Time.fixedDeltaTime;
-        WanderBehavior(); // Dinlenirken de gezsin
-
-        if (cooldownTimer <= 0)
-        {
-            isCoolingDown = false;
+            WanderBehavior();
         }
     }
 
     void PerformSlashAttack()
     {
-        rb.linearVelocity = Vector3.zero;
-
-        if (currentTarget != null)
-            LookAt(currentTarget.position);
-
-        // --- DÜZELTİLEN KISIM ---
-        // Mesafe kontrolünü kaldırdık, kesin çalışsın.
         if (AudioManager.instance != null)
         {
-            AudioManager.instance.PlayAttack();
+            AudioManager.instance.PlaySlash(); // Slash sesi çağırıyoruz
         }
-        else
-        {
-            // Eğer ses çıkmıyorsa konsola hata yazsın ki anlayalım
-            Debug.LogError("Ses Yöneticisi (AudioManager) bulunamadı!");
-        }
-        // ------------------------
+        rb.linearVelocity = Vector3.zero;
+        if (currentTarget != null) LookAt(currentTarget.position);
+
+        
+        
 
         if (slashPrefab != null && firePoint != null)
         {
+            // Slash efektini yatay çıkar
             Quaternion rotasyon = Quaternion.Euler(90, transform.eulerAngles.y, 0);
             GameObject slash = Instantiate(slashPrefab, firePoint.position, rotasyon);
 
+            // --- GÜCÜ AKTARMA KISMI ---
             SimpleWeapon weapon = slash.GetComponent<SimpleWeapon>();
             if (weapon != null)
             {
                 weapon.owner = this.gameObject;
-                weapon.damage = 10;
+
+                // Inspector'dan girdiğin değerleri silaha aktar
+                weapon.damage = damageAmount;
+                weapon.knockback = knockbackForce;
             }
+            // --------------------------
+
             Destroy(slash, 0.3f);
         }
 
@@ -172,31 +113,38 @@ public class SlashEnemyAI : MonoBehaviour
         PickRandomPoint();
     }
 
-    void MoveTo(Vector3 dest, float speed)
+    // --- STANDART FONKSİYONLAR ---
+    void FindClosestTarget()
     {
-        LookAt(dest);
-        Vector3 dir = (dest - transform.position).normalized;
-        Vector3 vel = dir * speed;
-        vel.y = rb.linearVelocity.y;
-        rb.linearVelocity = vel;
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange);
+        float closestDist = Mathf.Infinity;
+        Transform bestTarget = null;
+
+        foreach (Collider hit in hits)
+        {
+            if (hit.gameObject == gameObject) continue;
+            if (hit.GetComponent<HealthSystem>() == null) continue;
+
+            if (hit.CompareTag("Player") || hit.CompareTag("Enemy"))
+            {
+                float d = Vector3.Distance(transform.position, hit.transform.position);
+                if (d < closestDist) { closestDist = d; bestTarget = hit.transform; }
+            }
+        }
+        currentTarget = bestTarget;
     }
 
-    void LookAt(Vector3 dest)
-    {
-        Vector3 lookPos = new Vector3(dest.x, transform.position.y, dest.z);
-        transform.LookAt(lookPos);
-    }
-
-    void PickRandomPoint()
-    {
-        float x = Random.Range(-patrolRange, patrolRange);
-        float z = Random.Range(-patrolRange, patrolRange);
-        wanderPoint = transform.position + new Vector3(x, 0, z);
-    }
+    void CooldownLogic() { cooldownTimer -= Time.fixedDeltaTime; WanderBehavior(); if (cooldownTimer <= 0) isCoolingDown = false; }
+    void WanderBehavior() { MoveTo(wanderPoint, wanderSpeed); if (Vector3.Distance(transform.position, wanderPoint) < 1f) PickRandomPoint(); }
+    void MoveTo(Vector3 d, float s) { LookAt(d); rb.linearVelocity = (d - transform.position).normalized * s; rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z); }
+    void LookAt(Vector3 d) { transform.LookAt(new Vector3(d.x, transform.position.y, d.z)); }
+    void PickRandomPoint() { wanderPoint = transform.position + new Vector3(Random.Range(-patrolRange, patrolRange), 0, Random.Range(-patrolRange, patrolRange)); }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

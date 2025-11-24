@@ -3,72 +3,56 @@ using UnityEngine;
 public class PlayerClubController : MonoBehaviour
 {
     [Header("Gerekli Parçalar")]
-    public GameObject clubPrefab; // ClubBase Prefab'i
+    public GameObject clubPrefab; // Sopa Prefabý (Küt ve geniþ bir küp yap)
 
-    [Header("Saldýrý Ayarlarý")]
-    public float attackRate = 1.0f;
-
-    [Tooltip("Sopa kaç derecelik yay çizecek? (Örn: 120, 150)")]
-    public float swingAngle = 140f;
-
-    [Tooltip("Dönme Hýzý")]
-    public float swingSpeed = 800f;
-
-    [Header("Güç Ayarlarý")]
-    public int damageAmount = 40;
-
-    [Tooltip("Düþmaný ne kadar uzaða fýrlatsýn?")]
-    public float knockbackForce = 10f; // <-- YENÝ: Ayarlanabilir Geri Tepme Gücü
+    [Header("Ayarlar")]
+    public float attackRate = 1.0f;    // Sopa aðýrdýr, yavaþ vursun
+    public float spawnHeight = 1.0f;   // Bel hizasý
+    public float forwardOffset = 0.8f; // Biraz ileride çýksýn
 
     private float nextAttackTime = 0f;
 
+    // PC Testi
     void Update()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            PerformAttack();
+            Attack();
         }
 #endif
     }
 
-    public void PerformAttack()
+    // --- ÝÞTE EKSÝK OLAN FONKSÝYON BU ---
+    // WeaponSelector scripti burayý arýyor!
+    public void Attack()
     {
         if (Time.time >= nextAttackTime)
         {
-            StartSwing();
-
-            if (AudioManager.instance != null)
-                AudioManager.instance.PlayAttack();
-
+            SpawnClub();
             nextAttackTime = Time.time + attackRate;
         }
     }
+    // ------------------------------------
 
-    void StartSwing()
+    void SpawnClub()
     {
+        if (AudioManager.instance != null) AudioManager.instance.PlayClub();
         if (clubPrefab == null) return;
 
-        // Prefab'i oluþtur
-        GameObject currentClub = Instantiate(clubPrefab, transform.position, transform.rotation);
+        // Karakterin önünde oluþtur
+        Vector3 spawnPos = transform.position + (Vector3.up * spawnHeight) + (transform.forward * forwardOffset);
 
-        // --- 1. HAREKET AYARI ---
-        ClubSwingLogic logic = currentClub.GetComponent<ClubSwingLogic>();
-        if (logic == null) logic = currentClub.AddComponent<ClubSwingLogic>();
+        // Sopayý oluþtur
+        GameObject club = Instantiate(clubPrefab, spawnPos, transform.rotation);
 
-        // Hýz ve Açý ile kurulum yap
-        logic.Setup(this.gameObject, swingSpeed, swingAngle);
+        // Sahibini ata
+        SimpleWeapon weapon = club.GetComponent<SimpleWeapon>();
+        if (weapon != null) weapon.owner = gameObject;
 
+        
 
-        // --- 2. HASAR VE KNOCKBACK AYARI ---
-        // SimpleWeapon scriptini bul (Child objelerde olabilir, o yüzden GetComponentInChildren kullanýyoruz)
-        SimpleWeapon weapon = currentClub.GetComponentInChildren<SimpleWeapon>();
-
-        if (weapon != null)
-        {
-            weapon.owner = this.gameObject;     // Vuran benim
-            weapon.damage = damageAmount;       // Hasar bu kadar
-            weapon.knockback = knockbackForce;  // <-- YENÝ: Ýtme gücünü buraya aktarýyoruz
-        }
+        // Sopa vurduktan hemen sonra yok olsun
+        Destroy(club, 0.3f);
     }
 }

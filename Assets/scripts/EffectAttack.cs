@@ -32,8 +32,7 @@ public class EffectAttack : MonoBehaviour
             SpawnSlash();
 
             // --- SESÝ ÇAL ---
-            if (AudioManager.instance != null)
-                AudioManager.instance.PlayAttack();
+            if (AudioManager.instance != null) AudioManager.instance.PlaySlash();
             // ---------------
 
             nextAttackTime = Time.time + attackRate;

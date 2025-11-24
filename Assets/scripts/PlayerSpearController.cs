@@ -35,6 +35,8 @@ public class PlayerSpearController : MonoBehaviour
 
     void SpawnSpear()
     {
+        if (AudioManager.instance != null) AudioManager.instance.PlaySpear();
+
         if (spearPrefab == null) return;
 
         // --- MATEMATÝKSEL POZÝSYON HESABI ---

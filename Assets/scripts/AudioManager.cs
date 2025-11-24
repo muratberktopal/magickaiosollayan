@@ -5,15 +5,20 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
 
     [Header("Ses Kaynaklarý")]
-    public AudioSource musicSource; // Müziði çalan hoparlör
-    public AudioSource sfxSource;   // Efektleri çalan hoparlör
+    public AudioSource musicSource;
+    public AudioSource sfxSource;
 
-    [Header("Ses Dosyalarý (Klipler)")]
+    [Header("Genel Sesler")]
     public AudioClip backgroundMusic;
-    public AudioClip attackSound;
-    public AudioClip hitSound;
-    public AudioClip xpPickupSound;
-    public AudioClip levelUpSound;
+    public AudioClip hitSound;      // Hasar alma sesi
+    public AudioClip xpPickupSound; // XP toplama
+    public AudioClip levelUpSound;  // Level atlama
+
+    [Header("Silah Sesleri (Buralarý Doldur)")]
+    public AudioClip slashSound; // Kýlýç Sesi
+    public AudioClip spearSound; // Mýzrak Sesi
+    public AudioClip magicSound; // Büyü Sesi
+    public AudioClip clubSound;  // Sopa Sesi
 
     void Awake()
     {
@@ -22,7 +27,6 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        // Oyun baþlar baþlamaz müziði çal
         if (backgroundMusic != null)
         {
             musicSource.clip = backgroundMusic;
@@ -30,30 +34,50 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // --- SES ÇALMA FONKSÝYONLARI ---
+    // --- ÖZEL SES FONKSÝYONLARI ---
 
-    public void PlayAttack()
+    public void PlaySlash()
     {
-        // Ses üst üste binmesin, her vuruþta perde (pitch) hafif deðiþsin ki doðal gelsin
-        sfxSource.pitch = Random.Range(0.9f, 1.1f);
-        sfxSource.PlayOneShot(attackSound);
+        PlaySound(slashSound, 0.9f, 1.1f);
     }
+
+    public void PlaySpear()
+    {
+        PlaySound(spearSound, 0.9f, 1.1f);
+    }
+
+    public void PlayMagic()
+    {
+        PlaySound(magicSound, 1.0f, 1.2f); // Büyü biraz daha ince sesli olsun
+    }
+
+    public void PlayClub()
+    {
+        PlaySound(clubSound, 0.7f, 0.9f); // Sopa daha kalýn/tok sesli olsun
+    }
+
+    // --- DÝÐER SESLER ---
 
     public void PlayHit()
     {
-        sfxSource.pitch = Random.Range(0.8f, 1.2f);
-        sfxSource.PlayOneShot(hitSound);
+        PlaySound(hitSound, 0.8f, 1.2f);
     }
 
     public void PlayXP()
     {
-        sfxSource.pitch = 1f; // XP sesi hep ayný olsun (veya hafif ince)
-        sfxSource.PlayOneShot(xpPickupSound);
+        PlaySound(xpPickupSound, 1f, 1f);
     }
 
     public void PlayLevelUp()
     {
-        sfxSource.pitch = 1f;
-        sfxSource.PlayOneShot(levelUpSound);
+        PlaySound(levelUpSound, 1f, 1f);
+    }
+
+    // Yardýmcý Fonksiyon (Kod tekrarýný önlemek için)
+    void PlaySound(AudioClip clip, float minPitch, float maxPitch)
+    {
+        if (clip == null) return;
+        sfxSource.pitch = Random.Range(minPitch, maxPitch);
+        sfxSource.PlayOneShot(clip);
     }
 }
