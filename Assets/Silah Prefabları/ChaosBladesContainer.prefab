@@ -409,7 +409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d31da4de97bd654584a92a0ab0759ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleWeapon
-  damage: 20
+  damage: 40
   knockback: 5
   owner: {fileID: 0}
 --- !u!1 &5167164319977629675
@@ -768,7 +768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d31da4de97bd654584a92a0ab0759ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleWeapon
-  damage: 20
+  damage: 40
   knockback: 5
   owner: {fileID: 0}
 --- !u!1001 &5989068643587091501
