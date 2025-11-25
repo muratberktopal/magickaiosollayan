@@ -11,6 +11,10 @@ public class PlayerBowController : MonoBehaviour
     public float attackRate = 0.5f;
     public float spawnHeight = 1.2f;
 
+    public int damage = 15;
+    public float fireRate = 1.0f; // DİKKAT: Yay için 'fireRate' dedik
+
+
     private float nextAttackTime = 0f;
 
     // Script A��l�nca (Yay Se�ilince)

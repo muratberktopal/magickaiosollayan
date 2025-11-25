@@ -8,6 +8,8 @@ public class PlayerSpearController : MonoBehaviour
     [Header("Ayarlar")]
     public float attackRate = 0.8f;    // Saldýrý hýzý
     public float spawnHeight = 1.0f;   // Bel hizasý
+    public int damage = 15;
+
     public float forwardOffset = 0.5f; // Karakterin ne kadar önünde çýksýn?
 
     private float nextAttackTime = 0f;

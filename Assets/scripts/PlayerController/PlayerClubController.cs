@@ -3,13 +3,13 @@ using UnityEngine;
 public class PlayerClubController : MonoBehaviour
 {
     [Header("Gerekli Parçalar")]
-    public GameObject clubPrefab; // Sopa Prefabý (Küt ve geniþ bir küp yap)
+    public GameObject clubPrefab; // Sopa Prefsabý (Küt ve geniþ bir küp yap)
 
     [Header("Ayarlar")]
     public float attackRate = 1.0f;    // Sopa aðýrdýr, yavaþ vursun
     public float spawnHeight = 1.0f;   // Bel hizasý
     public float forwardOffset = 0.8f; // Biraz ileride çýksýn
-
+    public int damage = 15;
     private float nextAttackTime = 0f;
 
     // PC Testi
