@@ -1,14 +1,13 @@
 using UnityEngine;
-using TMPro;
+using TMPro; // TextMeshPro kütüphanesi þart
 
 public class DamagePopup : MonoBehaviour
 {
     private TextMeshPro textMesh;
-    private float disappearTimer = 1f; // 1 saniye sonra yok olsun
+    private float disappearTimer = 1f; // 1 saniye yaþasýn
     private Color textColor;
     private Vector3 moveVector;
 
-    // Bu fonksiyonu yazý oluþurken çaðýracaðýz
     public void Setup(int damageAmount)
     {
         textMesh = GetComponent<TextMeshPro>();
@@ -16,28 +15,29 @@ public class DamagePopup : MonoBehaviour
 
         textColor = textMesh.color;
 
-        // Yukarý ve hafif saða/sola rastgele hareket etsin
-        moveVector = new Vector3(Random.Range(-1f, 1f), 5f, 0) * 2f;
+        // Yukarý ve hafif saða/sola rastgele fýrlasýn (Dinamik dursun)
+        moveVector = new Vector3(Random.Range(-1f, 1f), 5f, 0) * 3f;
     }
 
     void Update()
     {
-        // 1. HAREKET (Yukarý)
+        // 1. YUKARI HAREKET
         transform.position += moveVector * Time.deltaTime;
 
-        // Hareketi yavaþlat (Sürtünme etkisi)
-        moveVector -= moveVector * 3f * Time.deltaTime;
+        // Hareketi yavaþlat (Yerçekimi varmýþ gibi)
+        moveVector -= moveVector * 8f * Time.deltaTime;
 
-        // 2. SÜRE VE SOLMA (Fade Out)
-        disappearTimer -= Time.deltaTime;
-        if (disappearTimer < 0)
+        // 2. YAVAÞÇA KAYBOLMA
+        if (disappearTimer > 0.5f) // Ýlk yarým saniye net görünsün
         {
-            // Rengi þeffaflaþtýr
-            float fadeSpeed = 3f;
-            textColor.a -= fadeSpeed * Time.deltaTime;
+            disappearTimer -= Time.deltaTime;
+        }
+        else // Sonra solmaya baþlasýn
+        {
+            disappearTimer -= Time.deltaTime;
+            textColor.a -= 3f * Time.deltaTime; // Alfa (Þeffaflýk) azalt
             textMesh.color = textColor;
 
-            // Tamamen görünmez olunca yok et
             if (textColor.a < 0)
             {
                 Destroy(gameObject);
@@ -45,7 +45,7 @@ public class DamagePopup : MonoBehaviour
         }
     }
 
-    // Yazýnýn hep kameraya bakmasý için (Billboard)
+    // Yazý hep kameraya baksýn
     void LateUpdate()
     {
         if (Camera.main != null)

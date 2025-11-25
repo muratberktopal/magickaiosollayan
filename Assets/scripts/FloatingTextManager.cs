@@ -4,7 +4,8 @@ public class FloatingTextManager : MonoBehaviour
 {
     public static FloatingTextManager instance;
 
-    public GameObject popupPrefab; // Hazýrladýðýn Prefab
+    [Header("Ayarlar")]
+    public GameObject popupPrefab; // Sarý yazý prefabý
 
     void Awake()
     {
@@ -15,13 +16,17 @@ public class FloatingTextManager : MonoBehaviour
     {
         if (popupPrefab != null)
         {
-            // Yazýyý hasar yiyen kiþinin biraz tepesinde oluþtur
-            Vector3 spawnPos = position + new Vector3(0, 2f, 0); // Yükseklik ayarý
+            // Yazýyý karakterin biraz tepesinde oluþtur (Kafasýnýn üstü)
+            Vector3 spawnPos = position + new Vector3(0, 2.5f, 0);
+
+            // Rastgelelik ekle (Hepsi üst üste binmesin)
+            spawnPos.x += Random.Range(-0.5f, 0.5f);
 
             GameObject popup = Instantiate(popupPrefab, spawnPos, Quaternion.identity);
 
-            // Yazýnýn içindeki Setup fonksiyonunu çalýþtýr
-            popup.GetComponent<DamagePopup>().Setup(amount);
+            // Yazýyý kur
+            var script = popup.GetComponent<DamagePopup>();
+            if (script != null) script.Setup(amount);
         }
     }
 }
