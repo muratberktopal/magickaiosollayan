@@ -835,16 +835,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dagger_01
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6295102609801946693, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6295102609801946693, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5458737265024032779, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7299096279294069661}
   m_SourcePrefab: {fileID: 100100000, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
 --- !u!4 &1411867493520234140 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4650674917262604977, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
   m_PrefabInstance: {fileID: 5989068643587091501}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1791349280007621670 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5458737265024032779, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+  m_PrefabInstance: {fileID: 5989068643587091501}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &7299096279294069661
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791349280007621670}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.12846753, y: 0.5759811, z: 0.039230026}
+  m_Center: {x: -0.000000014538352, y: 0.1947819, z: -0.0000000084983185}
 --- !u!1001 &8717018060820851709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -909,11 +943,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dagger_01 (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6295102609801946693, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6295102609801946693, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5458737265024032779, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6826475114281421562}
   m_SourcePrefab: {fileID: 100100000, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+--- !u!1 &3690775911861701622 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5458737265024032779, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
+  m_PrefabInstance: {fileID: 8717018060820851709}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &6826475114281421562
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3690775911861701622}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1284675, y: 0.5759812, z: 0.039230037}
+  m_Center: {x: 0, y: 0.19478197, z: -0.000000008381905}
 --- !u!4 &4067759333057073484 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4650674917262604977, guid: ea816f7cece47574da091aaf86ab56f4, type: 3}
