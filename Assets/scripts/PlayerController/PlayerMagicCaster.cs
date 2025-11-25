@@ -2,73 +2,51 @@ using UnityEngine;
 
 public class PlayerMagicCaster : MonoBehaviour
 {
-    [Header("Gerekli Par�alar")]
-    public GameObject magicballPrefab; // Mavi B�y� Prefab� (Buraya s�r�kle)
-    public Transform magicSpawnPoint;  // ��k�� Noktas� (Buraya s�r�kle)
-
     [Header("Ayarlar")]
-    public float cooldownTime = 1f;    // At�� h�z�
-    private float nextCastTime = 0f;
+    public GameObject fireballPrefab; // Ateş Topu Prefabı
+    public Transform firePoint;       // Nereden çıkacak?
 
-    // Bilgisayarda test ederken Space tu�uyla �al��mas� i�in
+    // --- İŞTE EKSİK OLAN PARÇA BUYDU ---
+    public int damage = 25;           // Başlangıç Hasarı
+    // -----------------------------------
+
+    public float attackRate = 1f;     // Saldırı hızı
+    private float nextAttackTime = 0f;
+
     void Update()
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        if (Input.GetKeyDown(KeyCode.Space))
+        // Sol tık veya Space ile ateş (Test için)
+        // Mobildeysen butonun OnClick eventi Attack() fonksiyonunu çağırır.
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
-            Attack();
+            // Test amaçlı buradan da çağırabilirsin ama esas WeaponSelector butona bağlıyor
+            // Attack(); 
         }
-#endif
     }
 
-    // Bu fonksiyonu hem Space tu�u hem de Telefondaki Buton kullan�r
+    // WeaponSelector veya Buton bu fonksiyonu çağıracak
     public void Attack()
     {
-        // Zaman kontrol� (Cooldown)
-        if (Time.time >= nextCastTime)
+        if (Time.time >= nextAttackTime)
         {
-            CastMagic();
-            nextCastTime = Time.time + cooldownTime;
+            Shoot();
+            nextAttackTime = Time.time + attackRate;
         }
     }
 
-    void CastMagic()
+    void Shoot()
     {
-        // 1. G�VENL�K KONTROL�
-        if (magicballPrefab == null)
+        if (fireballPrefab == null || firePoint == null) return;
+
+        // Ateş topunu oluştur
+        GameObject fireball = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
+
+        // --- HASARI MERMİYE AKTAR ---
+        // Player'ın damage değeri arttıysa, mermi de güçlensin
+        FireballProjectile fbScript = fireball.GetComponent<FireballProjectile>();
+        if (fbScript != null)
         {
-            Debug.LogError("HATA: PlayerMagicCaster scriptinde 'Magicball Prefab' kutusu bo�!");
-            return;
+            fbScript.damage = this.damage;
         }
-        if (magicSpawnPoint == null)
-        {
-            Debug.LogError("HATA: PlayerMagicCaster scriptinde 'Spawn Point' kutusu bo�!");
-            return;
-        }
-
-        // 2. OLU�TURMA (Spawn)
-        GameObject magic = Instantiate(magicballPrefab, magicSpawnPoint.position, Quaternion.identity);
-
-        // 3. Y�N AYARI (Karakterin bakt��� y�ne �evir)
-        magic.transform.forward = transform.forward;
-
-        // 4. SCRIPT UYANDIRMA (Topun �zerindeki script kapal�ysa zorla a�)
-        FireballProjectile projScript = magic.GetComponent<FireballProjectile>();
-        if (projScript != null)
-        {
-            projScript.enabled = true;
-        }
-        else
-        {
-            // Script yoksa manuel hareket ekle (Yedek plan)
-            Rigidbody rb = magic.GetComponent<Rigidbody>();
-            if (rb != null) rb.linearVelocity = transform.forward * 20f;
-        }
-
-        // 5. SAH�PL�K (Bana vurmas�n)
-        SimpleWeapon weapon = magic.GetComponent<SimpleWeapon>();
-        if (weapon != null) weapon.owner = gameObject;
-
-        if (AudioManager.instance != null) AudioManager.instance.PlayMagic();
     }
 }

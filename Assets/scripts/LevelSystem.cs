@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class LevelSystem : MonoBehaviour
 {
+    // Deðiþkenler (Class'ýn en tepesine ekle/güncelle)
     [Header("Level Ayarlarý")]
-    public int currentXP = 0;
-    public int xpToNextLevel = 100; // Level atlamak için gereken XP
     public int currentLevel = 1;
-
-    [Header("Efektler")]
-    public GameObject levelUpEffect; // Level atlayýnca çýkacak efekt (Varsa)
+    public int currentXP = 0;
+    public int xpToNextLevel = 100; // Ýlk level için gereken XP
+    public float levelMultiplier = 1.2f; // Her levelda zorluk %20 artsýn (Dengeli)
+    public ParticleSystem levelUpEffect;
 
     // XP Taþý (LootItem) bu fonksiyonu çaðýrýr
     public void GainXP(int amount)
@@ -43,7 +43,7 @@ public class LevelSystem : MonoBehaviour
         // UpgradeManager'a "Hey, level atladým, bana kartlarý göster" diyoruz.
         if (UpgradeManager.instance != null)
         {
-            UpgradeManager.instance.ShowUpgradeOptions();
+            UpgradeManager.instance.ProcessLevelUp(currentLevel);
         }
         else
         {

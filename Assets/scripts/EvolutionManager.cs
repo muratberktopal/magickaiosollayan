@@ -56,39 +56,62 @@ public class EvolutionManager : MonoBehaviour
 
     void CheckForMerge()
     {
+        // Debug için envanteri yazdýralým
+        string envanterListesi = "";
+        foreach (var item in currentInventory) envanterListesi += item.ToString() + ", ";
+        Debug.Log(" ÞU ANKÝ ENVANTER: " + envanterListesi);
+
         MergeRecipe bestMatch = null;
         int maxMatchCount = 0;
 
         foreach (var recipe in allRecipes)
         {
-            // 1. Bu tarifin malzemeleri bizde tam olarak var mý?
-            bool hasAll = true;
-
-            // Eðer tarifin malzeme listesi boþsa (hatalý tarif) atla
             if (recipe.requiredIngredients == null || recipe.requiredIngredients.Count == 0) continue;
 
-            foreach (var item in recipe.requiredIngredients)
+            // --- DÜZELTME BURADA ---
+            // Gerçek envanteri bozmamak için geçici bir kopyasýný alýyoruz.
+            List<ItemType> tempInventory = new List<ItemType>(currentInventory);
+
+            bool hasAll = true;
+
+            // Tarifteki her bir malzemeyi tek tek arýyoruz
+            foreach (var requiredItem in recipe.requiredIngredients)
             {
-                // Envanterimizde bu malzemeden YETERÝNCE var mý kontrolü
-                // Basit 'Contains' yerine Count kontrolü daha güvenlidir ama þimdilik Contains yeterli
-                if (!currentInventory.Contains(item))
+                if (tempInventory.Contains(requiredItem))
                 {
+                    // Eðer varsa, bu kopyadan SÝLÝYORUZ ki ikinci kez saymasýn!
+                    tempInventory.Remove(requiredItem);
+                }
+                else
+                {
+                    // Yoksa (veya bitmiþse) bu tarif geçersizdir.
                     hasAll = false;
                     break;
                 }
             }
+            // -----------------------
 
-            // 2. En karmaþýk tarifi seçme mantýðý
-            if (hasAll && recipe.requiredIngredients.Count > maxMatchCount)
+            if (hasAll)
             {
-                bestMatch = recipe;
-                maxMatchCount = recipe.requiredIngredients.Count;
+                Debug.Log($" GEÇERLÝ TARÝF: {recipe.name} -> {recipe.resultItem}");
+
+                // En çok malzeme harcayan tarifi önceliklendir
+                if (recipe.requiredIngredients.Count > maxMatchCount)
+                {
+                    bestMatch = recipe;
+                    maxMatchCount = recipe.requiredIngredients.Count;
+                }
             }
         }
 
         if (bestMatch != null)
         {
+            Debug.Log(" KAZANAN TARÝF: " + bestMatch.resultItem);
             PerformMerge(bestMatch);
+        }
+        else
+        {
+            Debug.Log(" HÝÇBÝR BÝRLEÞÝM BULUNAMADI (Bu normal, malzeme biriktiriyorsun).");
         }
     }
 

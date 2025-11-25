@@ -14,82 +14,145 @@ public class UpgradeManager : MonoBehaviour
     public TextMeshProUGUI[] descTexts;
     public Image[] iconImages;
 
-    [Header("Tüm Kartlar (BURASI DOLU MU?)")]
-    public List<UpgradeData> allUpgrades; // <-- SUÇLU MUHTEMELEN BURASI
+    [Header("Kart Listeleri")]
+    public List<UpgradeData> statUpgrades;      // Hýz, Can, Hasar kartlarý
+    public List<UpgradeData> physicalMaterials; // Sopa, Ýp, Kýlýç kartlarý
+    public List<UpgradeData> magicMaterials;    // Ateþ, Buz vb. kartlar
 
     private void Awake()
     {
         instance = this;
     }
 
-    public void ShowUpgradeOptions()
+    public void ProcessLevelUp(int currentLevel)
     {
-        if (allUpgrades == null || allUpgrades.Count == 0) return;
+        bool isEvoLevel = EvolutionManager.instance.IsEvolutionLevel(currentLevel);
+
+        if (isEvoLevel)
+        {
+            ShowMaterialOptions();
+        }
+        else
+        {
+            ShowStatOptions();
+        }
+    }
+
+    void ShowStatOptions()
+    {
+        SetupPanel(statUpgrades, false);
+    }
+
+    void ShowMaterialOptions()
+    {
+        bool isMagic = EvolutionManager.instance.isMagicPath;
+        List<UpgradeData> targetList = isMagic ? magicMaterials : physicalMaterials;
+        SetupPanel(targetList, true);
+    }
+
+    void SetupPanel(List<UpgradeData> pool, bool isMaterial)
+    {
+        if (pool == null || pool.Count == 0) return;
 
         Time.timeScale = 0;
         levelUpPanel.SetActive(true);
 
         for (int i = 0; i < cardButtons.Length; i++)
         {
-            // Butonun kendisi var mý?
             if (cardButtons[i] == null) continue;
 
-            // Rastgele kart seçimi
-            int randomIndex = Random.Range(0, allUpgrades.Count);
-            UpgradeData randomCard = allUpgrades[randomIndex];
+            int randomIndex = Random.Range(0, pool.Count);
+            UpgradeData randomCard = pool[randomIndex];
 
-            // --- EKSÝK OLAN KISIMLAR BURASIYDI ---
+            if (nameTexts.Length > i) nameTexts[i].text = randomCard.upgradeName;
+            if (descTexts.Length > i) descTexts[i].text = randomCard.description;
+            if (iconImages.Length > i) iconImages[i].sprite = randomCard.icon;
 
-            // 1. Ýsim Doldur
-            if (nameTexts.Length > i && nameTexts[i] != null)
-                nameTexts[i].text = randomCard.upgradeName;
-
-            // 2. Açýklama Doldur (BURASI EKSÝKTÝ)
-            if (descTexts.Length > i && descTexts[i] != null)
-                descTexts[i].text = randomCard.description;
-
-            // 3. Ýkon Doldur (BURASI EKSÝKTÝ)
-            if (iconImages.Length > i && iconImages[i] != null)
-                iconImages[i].sprite = randomCard.icon;
-
-            // --------------------------------------
-
-            // Týklama Baðlantýsý
             cardButtons[i].onClick.RemoveAllListeners();
             cardButtons[i].onClick.AddListener(() => {
-                ApplyUpgrade(randomCard);
+                if (isMaterial)
+                {
+                    EvolutionManager.instance.AddMaterial(randomCard.itemReward);
+                    ClosePanel();
+                }
+                else
+                {
+                    ApplyStatUpgrade(randomCard);
+                }
             });
         }
     }
 
-    void ApplyUpgrade(UpgradeData card)
+    void ApplyStatUpgrade(UpgradeData card)
     {
-        Debug.Log("Seçilen: " + card.upgradeName);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
 
-        if (player != null)
+        // --- 1. HAREKET HIZI ---
+        if (card.upgradeType == UpgradeType.MoveSpeed)
         {
-            switch (card.upgradeType)
+            var moveScript = player.GetComponent<PlayerMovement>();
+            if (moveScript) moveScript.moveSpeed += card.value;
+        }
+
+        // --- 2. CAN (HEALTH) ---
+        else if (card.upgradeType == UpgradeType.Health)
+        {
+            var hpScript = player.GetComponent<HealthSystem>();
+            if (hpScript)
             {
-                case UpgradeType.MoveSpeed:
-                    var move = player.GetComponent<PlayerMovement>();
-                    if (move) move.moveSpeed += card.value;
-                    break;
-                case UpgradeType.Damage:
-                    Debug.Log("Hasar Arttý");
-                    // Efekt hasarýný artýrabilirsin
-                    break;
-                case UpgradeType.Health:
-                    var hp = player.GetComponent<HealthSystem>();
-                    if (hp) { hp.maxHealth += (int)card.value; hp.Heal((int)card.value); }
-                    break;
-                case UpgradeType.AttackSpeed:
-                    var atk = player.GetComponent<EffectAttack>();
-                    if (atk) atk.attackRate -= card.value;
-                    break;
+                hpScript.maxHealth += (int)card.value;
+                hpScript.Heal((int)card.value);
             }
         }
 
+        // --- 3. HASAR (DAMAGE) ---
+        else if (card.upgradeType == UpgradeType.Damage)
+        {
+            // Slash (Kýlýç)
+            var slash = player.GetComponent<EffectAttack>();
+            if (slash) slash.damage += (int)card.value;
+
+            // Spear (Mýzrak)
+            var spear = player.GetComponent<PlayerSpearController>();
+            if (spear) spear.damage += (int)card.value;
+
+            // Bow (Yay)
+            var bow = player.GetComponent<PlayerBowController>();
+            if (bow) bow.damage += (int)card.value;
+
+            // Magic (Büyü)
+            var magic = player.GetComponent<PlayerMagicCaster>();
+            if (magic) magic.damage += (int)card.value;
+
+            // Club (Sopa)
+            var club = player.GetComponent<PlayerClubController>();
+            if (club) club.damage += (int)card.value;
+        }
+
+        // --- 4. SALDIRI HIZI (ATTACK SPEED) ---
+        else if (card.upgradeType == UpgradeType.AttackSpeed)
+        {
+            // --- HATAYI BURADA DÜZELTTÝM ---
+            // EffectAttack içindeki deðiþkenin adý 'attackRate' idi.
+            var slash = player.GetComponent<EffectAttack>();
+            if (slash) slash.attackRate -= card.value;
+
+            var spear = player.GetComponent<PlayerSpearController>();
+            if (spear) spear.attackRate -= card.value;
+
+            var bow = player.GetComponent<PlayerBowController>();
+            if (bow) bow.fireRate -= card.value;
+
+            var club = player.GetComponent<PlayerClubController>();
+            if (club) club.attackRate -= card.value;
+        }
+
+        ClosePanel();
+    }
+
+    void ClosePanel()
+    {
         levelUpPanel.SetActive(false);
         Time.timeScale = 1;
     }

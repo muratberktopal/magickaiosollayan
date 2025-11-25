@@ -3,20 +3,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewUpgrade", menuName = "Game/Upgrade Card")]
 public class UpgradeData : ScriptableObject
 {
-    public string upgradeName; // Kartýn ismi (Örn: Hýzlý Koþ)
-    public string description; // Açýklama (Örn: Hýzýný %10 artýrýr)
-    public Sprite icon;        // Kartýn resmi
+    public string upgradeName;
+    public string description;
+    public Sprite icon;
 
-    // Hangi özelliði güçlendirecek?
-    public UpgradeType upgradeType;
-    public float value;        // Ne kadar artýracak? (Örn: 10, 0.5 vs.)
+    public UpgradeType upgradeType; // Stat mý yoksa Eþya mý?
+    public float value;        // Stat ise deðeri
+
+    // YENÝ: Eðer bu bir Eþya/Malzeme kartýysa, hangi eþyayý verecek?
+    public ItemType itemReward;
 }
 
-// Güçlendirme Türleri
 public enum UpgradeType
 {
-    MoveSpeed,  // Hýz
-    Damage,     // Hasar
-    Health,     // Can
-    AttackSpeed // Saldýrý Hýzý
+    MoveSpeed,
+    Damage,
+    Health,
+    AttackSpeed,
+    Item // <-- YENÝ TÜR: Bunu seçersen Stat deðil Eþya verir
 }

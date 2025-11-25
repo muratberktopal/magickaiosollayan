@@ -7,15 +7,13 @@ public class EffectAttack : MonoBehaviour
     public Transform firePoint;
 
     [Header("Ayarlar")]
-    public float attackRate = 0.5f;
+    public float attackRate = 0.5f; // Ýsim bu olduðu için UpgradeManager'da bunu kullandýk
     public float effectLifeTime = 0.2f;
-
+    public int damage = 10;
     private float nextAttackTime = 0f;
 
-    // Her karede klavyeyi dinlememiz lazým, o yüzden Update kullanýyoruz
     void Update()
     {
-        // BÝLGÝSAYAR ÝÇÝN EKLEME: Space tuþuna basýldý mý?
 #if UNITY_EDITOR || UNITY_STANDALONE
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -24,22 +22,15 @@ public class EffectAttack : MonoBehaviour
 #endif
     }
 
-    // Butona ve Klavyeye baðlý ortak fonksiyon
     public void PerformAttack()
     {
+        // Eski kodunda burasý iki kere yazýlmýþtý, düzelttim.
         if (Time.time >= nextAttackTime)
         {
             SpawnSlash();
 
-            // --- SESÝ ÇAL ---
             if (AudioManager.instance != null) AudioManager.instance.PlaySlash();
-            // ---------------
 
-            nextAttackTime = Time.time + attackRate;
-        }
-        if (Time.time >= nextAttackTime)
-        {
-            SpawnSlash();
             nextAttackTime = Time.time + attackRate;
         }
     }
@@ -48,15 +39,18 @@ public class EffectAttack : MonoBehaviour
     {
         if (slashPrefab == null || firePoint == null) return;
 
-        // Efekti yatay oluþtur
         Quaternion rotasyon = Quaternion.Euler(90, transform.eulerAngles.y, 0);
         GameObject currentSlash = Instantiate(slashPrefab, firePoint.position, rotasyon);
 
-        // Sahibini ata
+        // --- BURAYI GÜNCELLEDÝM ---
+        // Oluþan efektin (SimpleWeapon) hasarýný da güncellememiz lazým
+        // Yoksa level atlayýnca hasar artar ama vuruþ deðiþmez.
+
         SimpleWeapon weaponScript = currentSlash.GetComponent<SimpleWeapon>();
         if (weaponScript != null)
         {
             weaponScript.owner = this.gameObject;
+            weaponScript.damage = this.damage; // Hasarý aktar!
         }
 
         Destroy(currentSlash, effectLifeTime);
