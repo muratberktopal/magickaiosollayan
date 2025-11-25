@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65109509133cbf14ab7b79db23f5f870, type: 3}
   m_Name: ip
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: 
-  description: 
+  upgradeName: ip
+  description: ip
   icon: {fileID: 0}
   upgradeType: 4
   value: 0

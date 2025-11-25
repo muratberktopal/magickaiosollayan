@@ -2889,7 +2889,11 @@ MonoBehaviour:
   - {fileID: 383787371}
   - {fileID: 765036154}
   - {fileID: 611914454}
-  statUpgrades: []
+  statUpgrades:
+  - {fileID: 11400000, guid: 2081d1aa0a40efa4db29119486325678, type: 2}
+  - {fileID: 11400000, guid: eb59f30843f707749b40eeb703b2ea08, type: 2}
+  - {fileID: 11400000, guid: 725d7066b0c325644906194b0f2761e7, type: 2}
+  - {fileID: 11400000, guid: 5fd712f6fb9342a409b57b51c4f284f0, type: 2}
   physicalMaterials:
   - {fileID: 11400000, guid: fba4a8b30a75e264b8aa28f3236af683, type: 2}
   - {fileID: 11400000, guid: 900e9fe658ac7c64d883974ae640f9a9, type: 2}
@@ -68177,9 +68181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 289234147bad5c449abec83dfc71d52f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSystem
+  currentLevel: 1
   currentXP: 0
   xpToNextLevel: 100
-  currentLevel: 1
+  levelMultiplier: 1.2
   levelUpEffect: {fileID: 0}
 --- !u!114 &2062865260
 MonoBehaviour:
@@ -68196,6 +68201,7 @@ MonoBehaviour:
   spearPrefab: {fileID: 4161950122351401764, guid: 2d89e5a62d404d24cbe73f7a0da0079c, type: 3}
   attackRate: 0.8
   spawnHeight: 1
+  damage: 15
   forwardOffset: 1
 --- !u!114 &2062865261
 MonoBehaviour:
@@ -68213,6 +68219,7 @@ MonoBehaviour:
   firePoint: {fileID: 1038020300}
   attackRate: 0.5
   effectLifeTime: 0.2
+  damage: 10
 --- !u!114 &2062865262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68229,6 +68236,7 @@ MonoBehaviour:
   attackRate: 0.2
   spawnHeight: 1
   forwardOffset: 0.8
+  damage: 15
 --- !u!114 &2062865264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68241,9 +68249,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa83b8b862bb944389ac90f9e8534b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMagicCaster
-  magicballPrefab: {fileID: 5954177955937732044, guid: 4341b7b4dcfeb8d41b009358c065dee7, type: 3}
-  magicSpawnPoint: {fileID: 201505929}
-  cooldownTime: 2
+  fireballPrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  damage: 25
+  attackRate: 1
 --- !u!114 &2062865265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68260,6 +68269,8 @@ MonoBehaviour:
   bowVisualPrefab: {fileID: 0}
   attackRate: 0.5
   spawnHeight: 1
+  damage: 15
+  fireRate: 1
 --- !u!114 &2062865266
 MonoBehaviour:
   m_ObjectHideFlags: 0
