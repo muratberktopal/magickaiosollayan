@@ -31,6 +31,7 @@ public class HealthSystem : MonoBehaviour
 
     public void TakeDamage(int damage, Vector3 attackerPos, float knockbackForce)
     {
+
         // 1. CANI AZALT
         currentHealth -= damage;
         if (currentHealth < 0) currentHealth = 0;
@@ -47,7 +48,11 @@ public class HealthSystem : MonoBehaviour
         {
             Debug.LogError("Hasar Yazýsý Hatasý (Önemli Deðil): " + e.Message);
         }
-
+        if (FloatingTextManager.instance != null)
+        {
+            // Düþmanýn olduðu yerde hasar yazýsýný çýkar
+            FloatingTextManager.instance.ShowDamage(damage, transform.position);
+        }
         // 3. UI GÜNCELLE
         try
         {

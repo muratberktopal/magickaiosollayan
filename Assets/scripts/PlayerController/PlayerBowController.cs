@@ -56,42 +56,27 @@ public class PlayerBowController : MonoBehaviour
 
     void FireArrow()
     {
-        // --- HATA KONTROL� ---
-        if (arrowPrefab == null)
-        {
-            Debug.LogError("HATA: 'Arrow Prefab' kutusu bo�! PlayerBowController scriptine ok prefab�n� s�r�klemedin.");
-            return;
-        }
-        // ---------------------
+        if (arrowPrefab == null) return;
 
-        // Pozisyon: Omuz hizas� ve biraz �n�
         Vector3 spawnPos = transform.position + (Vector3.up * spawnHeight) + (transform.forward * 0.8f);
 
-        // Oku olu�tur
+        // Oku oluştur
         GameObject arrow = Instantiate(arrowPrefab, spawnPos, transform.rotation);
-        Debug.Log("OK OLU�TURULDU!"); // KONTROL 3
-        Collider arrowCol = arrow.GetComponent<Collider>();
-        if (arrowCol != null) arrowCol.enabled = false; // İlk salise kapalı kalsın
-        StartCoroutine(EnableCollider(arrowCol)); // Birazdan aç
-        // Oku f�rlat (Script kapal�ysa uyand�r)
-        FireballProjectile proj = arrow.GetComponent<FireballProjectile>();
-        if (proj != null)
+
+        // --- DEĞİŞEN KISIM BURASI ---
+        // Artık Fireball değil ArrowProjectile arıyoruz
+        ArrowProjectile arrowScript = arrow.GetComponent<ArrowProjectile>();
+        if (arrowScript != null)
         {
-            proj.enabled = true;
+            arrowScript.enabled = true; // Zorla çalıştır
         }
-        else
-        {
-            // E�er script yoksa manuel f�rlat (Yedek plan)
-            Rigidbody rb = arrow.GetComponent<Rigidbody>();
-            
-        }
+        // ----------------------------
 
         // Sahibini ata
         SimpleWeapon weapon = arrow.GetComponent<SimpleWeapon>();
         if (weapon != null) weapon.owner = gameObject;
 
-        // Ses
-        if (AudioManager.instance != null) AudioManager.instance.PlayMagic();
+        if (AudioManager.instance != null) AudioManager.instance.PlayMagic(); // Veya PlayBow yaparsan onu çağır
     }
 
 

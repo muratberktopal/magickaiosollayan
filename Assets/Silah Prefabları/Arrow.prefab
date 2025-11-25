@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 721023585663486099}
   - component: {fileID: 2856034690458589768}
   - component: {fileID: 4666913566188134322}
-  - component: {fileID: 5506607043791097457}
   - component: {fileID: 4276472956487477353}
   - component: {fileID: 1212446256879061919}
+  - component: {fileID: 2616996752272723893}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -115,22 +115,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5506607043791097457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4484953423328440795}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8feb80e3ac62bca44ae9ebfbef5e763b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FireballProjectile
-  speed: 70
-  lifeTime: 3
-  damage: 25
-  explosionEffect: {fileID: 0}
 --- !u!54 &4276472956487477353
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -173,6 +157,20 @@ MonoBehaviour:
   damage: 20
   knockback: 5
   owner: {fileID: 0}
+--- !u!114 &2616996752272723893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4484953423328440795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae5673b3e714f04fbe777552755c34a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowProjectile
+  speed: 40
+  lifeTime: 100
 --- !u!1001 &3895464431669427774
 PrefabInstance:
   m_ObjectHideFlags: 0

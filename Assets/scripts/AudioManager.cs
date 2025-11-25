@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip spearSound; // Mýzrak Sesi
     public AudioClip magicSound; // Büyü Sesi
     public AudioClip clubSound;  // Sopa Sesi
-
+    public AudioClip scytheSound;
     void Awake()
     {
         instance = this;
@@ -35,6 +35,11 @@ public class AudioManager : MonoBehaviour
     }
 
     // --- ÖZEL SES FONKSÝYONLARI ---
+    public void PlayScythe()
+    {
+        // Biraz daha "Výnnn" diye uzun bir ses olsun
+        PlaySound(scytheSound, 0.8f, 1.0f);
+    }
 
     public void PlaySlash()
     {
