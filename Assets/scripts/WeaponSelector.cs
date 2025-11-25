@@ -8,6 +8,9 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerWhipController whipScript;
+    public PlayerGreatswordController greatswordScript;
+    public PlayerFireballController fireballScript;
     public PlayerChaosController chaosScript;
     public PlayerScytheController scytheScript;
     public PlayerBowController bowScript;
@@ -26,7 +29,21 @@ public class WeaponSelector : MonoBehaviour
     }
 
     // --- SEÇÝM FONKSÝYONLARI ---
-    
+    public void SelectWhip()
+    {
+        EnableWeapon(whipScript);
+        SetButtonListener(() => whipScript.Attack());
+    }
+    public void SelectGreatsword()
+    {
+        EnableWeapon(greatswordScript);
+        SetButtonListener(() => greatswordScript.Attack());
+    }
+    public void SelectFireball()
+    {
+        EnableWeapon(fireballScript);
+        SetButtonListener(() => fireballScript.Attack());
+    }
     public void SelectSlash() // KILIÇ
     {
         EnableWeapon(slashScript);
@@ -92,6 +109,8 @@ public class WeaponSelector : MonoBehaviour
 
     void DisableAllWeapons()
     {
+        if (whipScript) whipScript.enabled = false;
+        if (fireballScript) fireballScript.enabled = false;
         if (scytheScript) scytheScript.enabled = false;
         if (slashScript) slashScript.enabled = false;
         if (spearScript) spearScript.enabled = false;
@@ -99,6 +118,7 @@ public class WeaponSelector : MonoBehaviour
         if (clubScript) clubScript.enabled = false;
         if (bowScript) bowScript.enabled = false;
         if (chaosScript) chaosScript.enabled = false;
+        if (greatswordScript) greatswordScript.enabled = false;
     }
 
     void EnableWeapon(MonoBehaviour script)

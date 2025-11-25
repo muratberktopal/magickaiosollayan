@@ -15,6 +15,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip levelUpSound;  // Level atlama
 
     [Header("Silah Sesleri (Buralarý Doldur)")]
+    public AudioClip whipSound;
     public AudioClip slashSound; // Kýlýç Sesi
     public AudioClip spearSound; // Mýzrak Sesi
     public AudioClip magicSound; // Büyü Sesi
@@ -35,6 +36,16 @@ public class AudioManager : MonoBehaviour
     }
 
     // --- ÖZEL SES FONKSÝYONLARI ---
+    public void PlayWhip()
+    {
+        // Eðer elinde özel kýrbaç sesi yoksa geçici olarak Slash sesini de çaldýrabilirsin
+        // Ama doðrusu budur:
+        if (whipSound != null)
+        {
+            sfxSource.pitch = Random.Range(1.0f, 1.2f); // Keskin bir ses olsun
+            sfxSource.PlayOneShot(whipSound);
+        }
+    }
     public void PlayScythe()
     {
         // Biraz daha "Výnnn" diye uzun bir ses olsun
