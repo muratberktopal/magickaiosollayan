@@ -15,5 +15,5 @@ MonoBehaviour:
   upgradeName: yemek vakti!
   description: canartio
   icon: {fileID: 21300000, guid: a495e7a5a454d5c4889fa880c65afb3e, type: 3}
-  upgradeType: 0
+  upgradeType: 2
   value: 3434
