@@ -26,43 +26,67 @@ public class WeaponSelector : MonoBehaviour
     }
 
     // --- SEÇÝM FONKSÝYONLARI ---
-    public void SelectChaos()
-    {
-        EnableWeapon(chaosScript);
-        SetButtonListener(() => chaosScript.Attack());
-    }
-    public void SelectBow()
-    {
-        EnableWeapon(bowScript);
-        SetButtonListener(() => bowScript.Attack());
-    }
+    
     public void SelectSlash() // KILIÇ
     {
         EnableWeapon(slashScript);
         SetButtonListener(() => slashScript.PerformAttack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Slash);
+    }
+    
+    public void SelectClub() // SOPA
+    {
+        EnableWeapon(clubScript);
+        SetButtonListener(() => clubScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Club);
+    }
+    public void SelectMagic() // BÜYÜ
+    {
+        EnableWeapon(magicScript);
+        SetButtonListener(() => magicScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Staff);
+    }
+
+    public void SelectRope() // BÜYÜ
+    {
+        // BURA DOLCAK SONRA
+
+
     }
 
     public void SelectSpear() // MIZRAK
     {
         EnableWeapon(spearScript);
         SetButtonListener(() => spearScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Spear);
     }
 
-    public void SelectMagic() // BÜYÜ
+    
+    public void SelectChaos()
     {
-        EnableWeapon(magicScript);
-        SetButtonListener(() => magicScript.Attack());
+        EnableWeapon(chaosScript);
+        SetButtonListener(() => chaosScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Chaos);
+    }
+    public void SelectBow()
+    {
+        EnableWeapon(bowScript);
+        SetButtonListener(() => bowScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Bow);
     }
 
-    public void SelectClub() // SOPA
-    {
-        EnableWeapon(clubScript);
-        SetButtonListener(() => clubScript.Attack());
-    }
     public void SelectScythe()
     {
         EnableWeapon(scytheScript);
         SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
     }
     // --- YARDIMCI FONKSÝYONLAR ---
 

@@ -1,0 +1,40 @@
+public enum ItemType
+{
+    // Temel Malzemeler
+    Slash,  
+    Club,   
+    Rope,   
+    Staff,  
+
+    // Birleþim Sonuçlarý (Tier 2)
+    Spear,
+    Whip,         
+    Bow,
+    GreatSword,
+    Chain,
+    Double_Baton,
+    //  SOPA+SOPA
+
+
+    // TIER 3 muratýndassayok
+    Chaos,
+    Nunchaku,
+    Flail,
+    Composite_bow,   //?!??!?!
+    Scythe,
+    Net,
+    Excalibur,
+    THATSNOTAWEAPONTHATSATREEWTF,
+
+
+
+
+    // Büyüler (Asa Yolu)
+    Fireball,
+    IceShard,
+    Lightning,
+
+    // Büyü Birleþimleri
+    Inferno,      // Fireball + Fireball
+    FrostNova     // IceShard + ...
+}
