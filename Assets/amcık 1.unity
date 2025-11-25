@@ -2537,6 +2537,139 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1723aa79032c97a409cbe2579266c0cd, type: 3}
+--- !u!1 &90235803
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 90235804}
+  - component: {fileID: 90235807}
+  - component: {fileID: 90235806}
+  - component: {fileID: 90235805}
+  m_Layer: 5
+  m_Name: Whip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &90235804
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90235803}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2057332205}
+  m_Father: {fileID: 1185295006}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 18.6}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &90235805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90235803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 90235806}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 110133265}
+        m_TargetAssemblyTypeName: WeaponSelector, Assembly-CSharp
+        m_MethodName: SelectWhip
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &90235806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90235803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &90235807
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90235803}
+  m_CullTransparentMesh: 1
 --- !u!1 &91922564
 GameObject:
   m_ObjectHideFlags: 0
@@ -3023,10 +3156,7 @@ MonoBehaviour:
   - {fileID: 765036154}
   - {fileID: 611914454}
   statUpgrades: []
-  physicalMaterials:
-  - {fileID: 11400000, guid: fba4a8b30a75e264b8aa28f3236af683, type: 2}
-  - {fileID: 11400000, guid: 900e9fe658ac7c64d883974ae640f9a9, type: 2}
-  - {fileID: 11400000, guid: 1cf243401b3a8a54fbd6e7be1e299724, type: 2}
+  physicalMaterials: []
   magicMaterials: []
 --- !u!4 &110133264
 Transform:
@@ -3057,6 +3187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSelector
   selectionPanel: {fileID: 1185295005}
   gameAttackButton: {fileID: 650033502}
+  whipScript: {fileID: 2062865270}
   greatswordScript: {fileID: 2062865269}
   fireballScript: {fileID: 2062865268}
   chaosScript: {fileID: 2062865266}
@@ -38655,6 +38786,7 @@ RectTransform:
   - {fileID: 2088397489}
   - {fileID: 67230669}
   - {fileID: 1590810455}
+  - {fileID: 90235804}
   m_Father: {fileID: 1192431847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -59710,6 +59842,7 @@ MonoBehaviour:
   hitSound: {fileID: 8300000, guid: 7e2c5b20762da714b82d464449774860, type: 3}
   xpPickupSound: {fileID: 8300000, guid: 1c694e50482d24341894c4cba46744e6, type: 3}
   levelUpSound: {fileID: 8300000, guid: 6a12a5d936bd34347a11bc8536b953e7, type: 3}
+  whipSound: {fileID: 0}
   slashSound: {fileID: 8300000, guid: 6a12a5d936bd34347a11bc8536b953e7, type: 3}
   spearSound: {fileID: 8300000, guid: 3e831dbebfa61044bb3e369f956d6b8d, type: 3}
   magicSound: {fileID: 0}
@@ -68153,6 +68286,142 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8016992082601135018, guid: f44eb65dba116c145a58f193663928bb, type: 3}
   m_PrefabInstance: {fileID: 350862620}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2057332204
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2057332205}
+  - component: {fileID: 2057332207}
+  - component: {fileID: 2057332206}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2057332205
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057332204}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 90235804}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2057332206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057332204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Whip
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281479730
+  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 24
+  m_fontSizeBase: 24
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &2057332207
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057332204}
+  m_CullTransparentMesh: 1
 --- !u!1 &2058760023
 GameObject:
   m_ObjectHideFlags: 0
@@ -68511,6 +68780,7 @@ GameObject:
   - component: {fileID: 2062865266}
   - component: {fileID: 2062865268}
   - component: {fileID: 2062865269}
+  - component: {fileID: 2062865270}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -68721,9 +68991,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 289234147bad5c449abec83dfc71d52f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSystem
+  currentLevel: 1
   currentXP: 0
   xpToNextLevel: 100
-  currentLevel: 1
+  levelMultiplier: 1.2
   levelUpEffect: {fileID: 0}
 --- !u!114 &2062865260
 MonoBehaviour:
@@ -68740,6 +69011,7 @@ MonoBehaviour:
   spearPrefab: {fileID: 4161950122351401764, guid: 2d89e5a62d404d24cbe73f7a0da0079c, type: 3}
   attackRate: 0.8
   spawnHeight: 1
+  damage: 15
   forwardOffset: 1
 --- !u!114 &2062865261
 MonoBehaviour:
@@ -68757,6 +69029,7 @@ MonoBehaviour:
   firePoint: {fileID: 1038020300}
   attackRate: 0.5
   effectLifeTime: 0.2
+  damage: 10
 --- !u!114 &2062865262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68773,6 +69046,7 @@ MonoBehaviour:
   attackRate: 0.2
   spawnHeight: 1
   forwardOffset: 0.8
+  damage: 15
 --- !u!114 &2062865264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68785,9 +69059,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa83b8b862bb944389ac90f9e8534b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMagicCaster
-  magicballPrefab: {fileID: 5954177955937732044, guid: 4341b7b4dcfeb8d41b009358c065dee7, type: 3}
-  magicSpawnPoint: {fileID: 201505929}
-  cooldownTime: 2
+  fireballPrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  damage: 25
+  attackRate: 1
 --- !u!114 &2062865265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68804,6 +69079,8 @@ MonoBehaviour:
   bowVisualPrefab: {fileID: 0}
   attackRate: 0.5
   spawnHeight: 1
+  damage: 15
+  fireRate: 1
 --- !u!114 &2062865266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68864,6 +69141,20 @@ MonoBehaviour:
   attackRate: 10
   spawnDistance: 0.7
   slowSpeed: 3
+--- !u!114 &2062865270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062865246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74464e0c77fdfb1489108dfb567a5243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWhipController
+  whipPrefab: {fileID: 3132927119040959028, guid: 75116e07ae54fdf429659d20671afa0e, type: 3}
+  attackRate: 0.7
 --- !u!1001 &2062999437
 PrefabInstance:
   m_ObjectHideFlags: 0
