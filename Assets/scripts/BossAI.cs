@@ -11,16 +11,19 @@ public class BossAI : MonoBehaviour
     [Header("Temel Özellikler")]
     public float moveSpeed = 2.5f;
     public float detectionRange = 20f;
-    public float attackRange = 3f; // Normal vuruþ mesafesi
+    public float attackRange = 3f;
+
+    [Header("Normal Saldýrý Ayarlarý")] // <-- YENÝ
+    public float normalAttackRate = 2f; // Kaç saniyede bir normal vursun?
+    public int normalDamage = 15;       // Normal vuruþ hasarý
 
     [Header("Özel Yetenek Ayarlarý")]
-    public float skillCooldown = 5f; // Yetenek ne sýklýkla kullanýlsýn?
-    public float skillRange = 6f;    // Yetenek kullanma mesafesi
-    public GameObject skillEffectPrefab; // Alan efekti veya Mermi prefabý
-    public Transform firePoint;      // Merminin çýkacaðý yer
+    public float skillCooldown = 5f;
+    public float skillRange = 6f;
+    public GameObject skillEffectPrefab;
+    public Transform firePoint;
 
-    [Header("Hasar Ayarlarý")]
-    public int normalDamage = 20;
+    [Header("Yetenek Hasar Ayarlarý")]
     public int skillDamage = 40;
     public float skillKnockback = 15f;
 
@@ -28,17 +31,19 @@ public class BossAI : MonoBehaviour
     private Transform player;
     private Rigidbody rb;
     private Animator animator;
+
     private float nextSkillTime = 0f;
-    private bool isUsingSkill = false; // Þu an yetenek kullanýyor mu?
+    private float nextNormalTime = 0f; // <-- YENÝ
+
+    private bool isUsingSkill = false;
+    private bool isAttackingNormal = false; // <-- YENÝ
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        // Animator varsa al (SurvivalEnemyAI mantýðý)
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
 
-        // Player'ý bul
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null) player = p.transform;
     }
@@ -46,7 +51,7 @@ public class BossAI : MonoBehaviour
     void FixedUpdate()
     {
         if (player == null) return;
-        if (isUsingSkill) return; // Yetenek kullanýyorsa hareket etmesin
+        if (isUsingSkill || isAttackingNormal) return; // Saldýrýyorsa kýmýldamasýn
 
         float dist = Vector3.Distance(transform.position, player.position);
 
@@ -54,7 +59,7 @@ public class BossAI : MonoBehaviour
         bool isMoving = rb.linearVelocity.magnitude > 0.1f;
         if (animator != null) animator.SetBool("IsMoving", isMoving);
 
-        // 1. YETENEK KONTROLÜ (Cooldown doldu mu ve menzilde mi?)
+        // 1. ÖZEL YETENEK (Öncelikli)
         if (Time.time >= nextSkillTime && dist <= skillRange)
         {
             StartCoroutine(UseSpecialSkill());
@@ -64,73 +69,96 @@ public class BossAI : MonoBehaviour
         {
             if (dist <= attackRange)
             {
-                // Normal saldýrý (SurvivalEnemyAI'deki gibi basit temas hasarý veya animasyon)
-                rb.linearVelocity = Vector3.zero;
+                rb.linearVelocity = Vector3.zero; // Dur
                 LookAt(player.position);
+
+                // --- YENÝ EKLENEN KISIM: NORMAL VURUÞ ---
+                if (Time.time >= nextNormalTime)
+                {
+                    StartCoroutine(DoNormalAttack());
+                }
+                // ----------------------------------------
             }
             else
             {
-                // Kovala
                 MoveTo(player.position);
             }
         }
     }
 
+    // --- YENÝ EKLENEN FONKSÝYON: NORMAL VURUÞ ---
+    IEnumerator DoNormalAttack()
+    {
+        isAttackingNormal = true;
+        rb.linearVelocity = Vector3.zero; // Saldýrýrken kaymasýn
+
+        // Animasyonu tetikle (Unity'de "NormalAttack" diye bir Trigger açman gerekecek)
+        if (animator != null) animator.SetTrigger("NormalAttack");
+
+        // Vuruþun inmesi için bekle (Animasyonun hýzýna göre ayarla, örn: 0.5sn)
+        yield return new WaitForSeconds(0.5f);
+
+        // Hâlâ menzilde mi? (Oyuncu kaçtý mý?)
+        if (player != null)
+        {
+            float dist = Vector3.Distance(transform.position, player.position);
+            if (dist <= attackRange + 1f) // Biraz tolerans tanýyalým
+            {
+                // Direkt hasar ver
+                HealthSystem hp = player.GetComponent<HealthSystem>();
+                if (hp != null)
+                {
+                    hp.TakeDamage(normalDamage, transform.position, 5f);
+                }
+
+                // Ses
+                if (AudioManager.instance != null) AudioManager.instance.PlayHit();
+            }
+        }
+
+        // Animasyonun bitmesini bekle
+        yield return new WaitForSeconds(0.5f);
+
+        nextNormalTime = Time.time + normalAttackRate;
+        isAttackingNormal = false;
+    }
+    // ---------------------------------------------
+
     IEnumerator UseSpecialSkill()
     {
         isUsingSkill = true;
-        rb.linearVelocity = Vector3.zero; // Dur
+        rb.isKinematic = true;
+        rb.linearVelocity = Vector3.zero;
         LookAt(player.position);
 
-        // --- HAZIRLIK (Telegraphing) ---
-        // Oyuncuya "Kaç!" demek için rengini kýrmýzý yap veya animasyon oynat
         if (animator != null) animator.SetTrigger("SkillAttack");
-        Debug.Log(bossType + " Yetenek Hazýrlanýyor!");
 
-        yield return new WaitForSeconds(1.0f); // 1 saniye bekle (Oyuncuya kaçma fýrsatý)
+        yield return new WaitForSeconds(1.0f);
 
-        // --- YETENEK UYGULAMA ---
         switch (bossType)
         {
-            case BossType.Crusher: // YERE VURMA (AOE)
+            case BossType.Crusher:
                 if (skillEffectPrefab != null)
                 {
-                    // Ayaklarýnýn dibinde patlama yarat
-                    GameObject smash = Instantiate(skillEffectPrefab, transform.position, Quaternion.identity);
+                    Vector3 smashPos = transform.position;
+                    smashPos += transform.forward * 2.5f;
+                    smashPos.y = transform.position.y + 1f;
+
+                    GameObject smash = Instantiate(skillEffectPrefab, smashPos, transform.rotation);
                     SetupDamage(smash, skillDamage, skillKnockback);
                     Destroy(smash, 1f);
                 }
                 break;
-
-            case BossType.Dasher: // ATILMA (DASH)
-                // Oyuncuya doðru fýrlat
-                Vector3 dashDir = (player.position - transform.position).normalized;
-                rb.AddForce(dashDir * 40f, ForceMode.Impulse); // Çok hýzlý itiþ
-                // Dash sýrasýnda çarptýðýna hasar vermesi için collider triggerlanabilir
-                // Þimdilik basit tutuyoruz, çarpýnca hasar verecek
-                break;
-
-            case BossType.Shooter: // MERMÝ ATMA
-                if (skillEffectPrefab != null && firePoint != null)
-                {
-                    GameObject projectile = Instantiate(skillEffectPrefab, firePoint.position, transform.rotation);
-                    // Mermi scriptini ayarla (Senin FireballProjectile veya SimpleWeapon)
-                    SetupDamage(projectile, skillDamage, 5f);
-
-                    // Eðer merminin kendi hareket kodu yoksa itelim:
-                    Rigidbody projRb = projectile.GetComponent<Rigidbody>();
-                    if (projRb != null) projRb.linearVelocity = transform.forward * 15f;
-                }
-                break;
+                // Diðer Boss tipleri buraya...
         }
 
-        // --- BÝTÝÞ ---
-        yield return new WaitForSeconds(0.5f); // Biraz daha bekle (Recover)
+        yield return new WaitForSeconds(0.5f);
+
+        rb.isKinematic = false;
         nextSkillTime = Time.time + skillCooldown;
         isUsingSkill = false;
     }
 
-    // Yardýmcý: Oluþturulan saldýrýya hasar verisini iþle
     void SetupDamage(GameObject obj, int dmg, float kb)
     {
         SimpleWeapon sw = obj.GetComponent<SimpleWeapon>();
@@ -138,7 +166,7 @@ public class BossAI : MonoBehaviour
 
         if (sw != null)
         {
-            sw.owner = gameObject; // Vuran Boss
+            sw.owner = gameObject;
             sw.damage = dmg;
             sw.knockback = kb;
         }
@@ -149,7 +177,6 @@ public class BossAI : MonoBehaviour
         LookAt(dest);
         Vector3 dir = (dest - transform.position).normalized;
         rb.linearVelocity = dir * moveSpeed;
-        // Y eksenini koru (zýplamasýn)
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z);
     }
 
