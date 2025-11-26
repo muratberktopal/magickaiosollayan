@@ -17,6 +17,8 @@ public enum ItemType
 
 
     // TIER 3 muratýndassayok
+    
+    Double_Sided_Sword,
     Chaos,
     Nunchaku,
     Flail,
