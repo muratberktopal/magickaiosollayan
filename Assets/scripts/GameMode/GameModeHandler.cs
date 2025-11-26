@@ -3,35 +3,31 @@ using UnityEngine;
 public class GameModeHandler : MonoBehaviour
 {
     [Header("Battle Royale Parçalarý")]
-    public GameObject battleRoyaleUI; // "Kalan: 10" Yazýsý
-    public BattleRoyaleManager brManager; // Yönetici Scripti
+    public GameObject battleRoyaleUI; // "Kalan: 10" yazýsý
+    public BattleRoyaleManager brManager;
+
+    [Header("Survival Parçalarý")]
+    public GameObject survivalTimerUI; // YENÝ: "00:00" yazýsý
 
     void Start()
     {
-        // Hafýzadan modu oku (0: BR, 1: Survival)
         int mode = PlayerPrefs.GetInt("GameMode", 0);
 
-        if (mode == 0)
+        if (mode == 0) // BATTLE ROYALE
         {
-            // --- BATTLE ROYALE MODU ---
-            // Her þeyi aç
+            // BR aç, Survival kapat
             if (battleRoyaleUI) battleRoyaleUI.SetActive(true);
             if (brManager) brManager.enabled = true;
-        }
-        else
-        {
-            // --- SURVIVAL MODU ---
-            // Her þeyi kapat
-            if (battleRoyaleUI)
-            {
-                battleRoyaleUI.SetActive(false); // <--- ÝÞTE BU SATIR GÝZLER
-            }
-            else
-            {
-                Debug.LogError("HATA: 'Battle Royale UI' kutusu boþ! Kapatacak bir þey bulamadým.");
-            }
 
-            if (brManager) brManager.enabled = false; // BR kurallarýný devre dýþý býrak
+            if (survivalTimerUI) survivalTimerUI.SetActive(false); // Saati gizle
+        }
+        else // SURVIVAL
+        {
+            // BR kapat, Survival aç
+            if (battleRoyaleUI) battleRoyaleUI.SetActive(false);
+            if (brManager) brManager.enabled = false;
+
+            if (survivalTimerUI) survivalTimerUI.SetActive(true); // Saati göster
         }
     }
 }

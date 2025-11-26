@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpearLogic
   damage: 35
-  lifeTime: 0.3
+  lifeTime: 0.2
   knockback: 8
   owner: {fileID: 0}
 --- !u!114 &6107429623823636288
