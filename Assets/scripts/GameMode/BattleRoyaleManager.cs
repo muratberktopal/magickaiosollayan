@@ -1,40 +1,53 @@
 using UnityEngine;
-using TMPro; // Yazýlar için þart
-using UnityEngine.SceneManagement; // Menüye dönmek için þart
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class BattleRoyaleManager : MonoBehaviour
 {
-    public static BattleRoyaleManager instance; // Her yerden eriþim
+    public static BattleRoyaleManager instance;
 
     [Header("Ayarlar")]
-    public int totalEnemies = 10; // Kaç düþmanla baþlýyoruz?
-    private int enemiesAlive;
+    public int totalEnemies = 10;
+    [HideInInspector] public int enemiesAlive;
 
     [Header("UI Referanslarý")]
-    public TextMeshProUGUI aliveText; // "Kalan: 10" yazýsý
-    public GameObject victoryPanel;   // Yeþil Zafer paneli
+    public TextMeshProUGUI aliveText;
+    public GameObject victoryPanel;
 
     void Awake()
     {
-        instance = this; // Yönetici benim!
+        instance = this;
         enemiesAlive = totalEnemies;
     }
 
     void Start()
     {
-        UpdateUI(); // Baþlangýç yazýsýný yaz
+        // --- GÜVENLÝK KONTROLÜ ---
+        // Eðer Survival Modundaysak (Mod 1), bu script kendini kapatsýn ve UI'ý gizlesin
+        int gameMode = PlayerPrefs.GetInt("GameMode", 0);
 
-        // Paneli garanti olsun diye kapat
+        if (gameMode == 1) // Survival
+        {
+            if (aliveText != null) aliveText.gameObject.SetActive(false); // Yazýyý gizle
+            this.enabled = false; // Scripti devre dýþý býrak
+            return; // Çýk
+        }
+        // -------------------------
+
+        UpdateUI();
         if (victoryPanel != null) victoryPanel.SetActive(false);
     }
 
-    // Düþman ölünce HealthSystem buraya haber verecek
     public void EnemyDied()
     {
-        enemiesAlive--; // Sayýyý düþür
-        UpdateUI();     // Yazýyý güncelle
+        // --- ÝKÝNCÝ KÝLÝT ---
+        // Eðer script devre dýþýysa veya Survival modundaysak HÝÇBÝR ÞEY YAPMA.
+        if (!this.enabled || PlayerPrefs.GetInt("GameMode", 0) == 1) return;
+        // --------------------
 
-        // Kimse kalmadýysa KAZANDIN
+        enemiesAlive--;
+        UpdateUI();
+
         if (enemiesAlive <= 0)
         {
             WinGame();
@@ -45,7 +58,6 @@ public class BattleRoyaleManager : MonoBehaviour
     {
         if (aliveText != null)
         {
-            // +1 ekliyoruz çünkü SEN de hayattasýn (Toplam kiþi sayýsý)
             aliveText.text = "KALAN: " + (enemiesAlive + 1).ToString();
         }
     }
@@ -54,18 +66,15 @@ public class BattleRoyaleManager : MonoBehaviour
     {
         Debug.Log("OYUN BÝTTÝ - KAZANDIN!");
 
-        // Paneli aç
         if (victoryPanel != null)
             victoryPanel.SetActive(true);
 
-        // Oyunu dondur (Kutlama aný)
         Time.timeScale = 0;
     }
 
-    // Butona baðlanacak fonksiyon
     public void BackToMenu()
     {
-        Time.timeScale = 1; // Zamaný düzelt
-        SceneManager.LoadScene(0); // 0. Sahne (Genelde Menü sahnesidir)
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
     }
 }
