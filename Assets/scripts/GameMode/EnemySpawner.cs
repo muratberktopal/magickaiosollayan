@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic; // List için gerekli
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -12,10 +13,22 @@ public class EnemySpawner : MonoBehaviour
     public float spawnRate = 2f;
     private float nextSpawnTime = 0f;
 
-    // --- KONTROL DEÐÝÞKENLERÝ ---
+    // --- YENÝ EKLENEN KISIM: BOSS LÝSTESÝ ---
+    [System.Serializable]
+    public struct BossWave
+    {
+        public string name;           // Editörde karýþmasýn diye isim
+        public float spawnTime;       // Kaçýncý saniyede gelsin? (Örn: 60, 120, 180)
+        public GameObject bossPrefab; // Hangi Boss?
+        [HideInInspector] public bool spawned; // Doðdu mu kontrolü
+    }
+    public List<BossWave> bossWaves; // Inspector'dan dolduracaksýn
+    // ----------------------------------------
+
     private int gameMode = 0;
-    private int spawnedCount = 0; // Kaç tane doðurduk?
-    private int maxEnemies = 10;  // BR Limiti
+    private int spawnedCount = 0;
+    private int maxEnemies = 10;
+    private float survivalStartTime; // Oyunun baþlama zamaný
 
     void Start()
     {
@@ -25,66 +38,91 @@ public class EnemySpawner : MonoBehaviour
             if (p != null) player = p.transform;
         }
 
-        // Modu Oku
         gameMode = PlayerPrefs.GetInt("GameMode", 0);
-        Debug.Log("SPAWNER BAÞLADI. Mod: " + gameMode); // Konsola bak: 0 mý 1 mi?
 
         if (gameMode == 0) // BATTLE ROYALE
         {
-            // Limiti Manager'dan al
             if (BattleRoyaleManager.instance != null)
-            {
                 maxEnemies = BattleRoyaleManager.instance.totalEnemies;
-            }
-
-            Debug.Log("Hedef Düþman Sayýsý: " + maxEnemies);
             StartCoroutine(SpawnBattleRoyaleWave());
+        }
+        else // SURVIVAL
+        {
+            survivalStartTime = Time.time; // Zamaný baþlat
         }
     }
 
     void Update()
     {
-        // BATTLE ROYALE ÝSE UPDATE ÇALIÞMASIN (ÇELÝK KAPI)
         if (gameMode == 0) return;
 
-        // Sadece SURVIVAL (Mod 1) ise burasý çalýþýr
+        // --- SURVIVAL MANTIÐI ---
         if (player != null)
         {
+            // 1. Normal Düþman Doðumu
             if (Time.time >= nextSpawnTime)
             {
-                SpawnEnemy();
+                SpawnEnemy(enemyPrefab); // Normal düþman
                 nextSpawnTime = Time.time + spawnRate;
             }
+
+            // 2. BOSS KONTROLÜ (YENÝ)
+            CheckBossSpawns();
         }
     }
 
-    IEnumerator SpawnBattleRoyaleWave()
+    void CheckBossSpawns()
     {
-        // Sayaç Limite ulaþana kadar döngü
-        while (spawnedCount < maxEnemies)
+        float timeElapsed = Time.time - survivalStartTime;
+
+        // Listeyi kontrol et
+        for (int i = 0; i < bossWaves.Count; i++)
         {
-            SpawnEnemy();
-            spawnedCount++; // Sayacý artýr
-
-            // 10. düþmaný doðurduysak dur
-            if (spawnedCount >= maxEnemies)
+            // Zamaný geldiyse VE daha önce doðmadýysa
+            if (!bossWaves[i].spawned && timeElapsed >= bossWaves[i].spawnTime)
             {
-                Debug.Log("LÝMÝTE ULAÞILDI. Spawner duruyor.");
-                yield break; // Döngüyü kýr ve çýk
-            }
+                // Boss'u oluþtur
+                SpawnEnemy(bossWaves[i].bossPrefab);
 
-            yield return new WaitForSeconds(0.2f);
+                // Struct olduðu için listeyi güncellememiz lazým:
+                BossWave updateWave = bossWaves[i];
+                updateWave.spawned = true;
+                bossWaves[i] = updateWave;
+
+                Debug.Log("BOSS GELDÝ: " + updateWave.name);
+
+                // Boss geldiðinde "UYARI" sesi veya efekti ekleyebilirsin
+                if (AudioManager.instance != null) AudioManager.instance.PlayLevelUp(); // Þimdilik level sesi çalsýn
+            }
         }
     }
 
-    void SpawnEnemy()
+    // Fonksiyonu parametre alacak þekilde güncelledim
+    void SpawnEnemy(GameObject prefabToSpawn)
     {
-        if (enemyPrefab == null) return;
+        if (prefabToSpawn == null) return;
 
         Vector2 randomPoint = Random.insideUnitCircle.normalized * spawnRadius;
         Vector3 spawnPos = player.position + new Vector3(randomPoint.x, 0, randomPoint.y);
         spawnPos.y = 0.5f;
 
-        Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+        Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+    }
+
+    // Eski Battle Royale kodu uyumlu kalsýn diye overload yaptým
+    void SpawnEnemy()
+    {
+        SpawnEnemy(enemyPrefab);
+    }
+
+    IEnumerator SpawnBattleRoyaleWave()
+    {
+        while (spawnedCount < maxEnemies)
+        {
+            SpawnEnemy();
+            spawnedCount++;
+            if (spawnedCount >= maxEnemies) yield break;
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 }
