@@ -33744,9 +33744,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EvolutionManager
   milestoneLevels: 0400000009000000
   allRecipes:
-  - {fileID: 11400000, guid: 58547b5dff2bd554189aaecb788c719f, type: 2}
-  - {fileID: 11400000, guid: 1430c6813b6525c46a69c2e3a054611c, type: 2}
+  - {fileID: 11400000, guid: 8fbe9b2117673ce4eaa226c68e20f509, type: 2}
   - {fileID: 11400000, guid: 2e7bd123d887f974082cae1cdaaf78db, type: 2}
+  - {fileID: 11400000, guid: ba94ac814192ed64a8354fe1be96171a, type: 2}
+  - {fileID: 11400000, guid: 7489fd973905d324a9620df4f34b8a2d, type: 2}
+  - {fileID: 11400000, guid: 2725137d198ea9042bcdc1ea4dc7dbe5, type: 2}
+  - {fileID: 11400000, guid: bcdeb1279ddb5cc4b8155d0b064b1062, type: 2}
+  - {fileID: 11400000, guid: 4ac52b2d4025a694f924dc59a3d0f3b1, type: 2}
+  - {fileID: 11400000, guid: 47e818514f7d46b4ab76a65f64b4d354, type: 2}
+  - {fileID: 11400000, guid: 1430c6813b6525c46a69c2e3a054611c, type: 2}
+  - {fileID: 11400000, guid: 1507be8daaf0c9f4eb2682dfb4f01a6c, type: 2}
+  - {fileID: 11400000, guid: 58547b5dff2bd554189aaecb788c719f, type: 2}
+  - {fileID: 11400000, guid: e9dc36fa201643749acc850f9ac016be, type: 2}
+  - {fileID: 11400000, guid: 308765b7f7b5b5b45953804abe9e0d75, type: 2}
   currentInventory: 
   isMagicPath: 0
   weaponSelector: {fileID: 110133265}
