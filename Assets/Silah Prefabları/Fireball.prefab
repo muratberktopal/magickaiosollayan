@@ -144,7 +144,7 @@ MonoBehaviour:
   speed: 30
   lifeTime: 5
   damage: 25
-  explosionEffect: {fileID: 85941164691198867, guid: bad3cf055489f0e4e9cd51bd9cdb7008, type: 3}
+  explosionEffect: {fileID: 5942177893964023165, guid: 438c0b7b02dcafa4996592b62d22671f, type: 3}
 --- !u!96 &4750374564123629057
 TrailRenderer:
   serializedVersion: 3

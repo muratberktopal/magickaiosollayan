@@ -1,78 +1,82 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Audio;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement; // Sahne deðiþtirmek için
+using UnityEngine.Audio;           // Ses için
+using UnityEngine.UI;              // Slider için
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("Baðlantýlar")]
-    public GameObject settingsPanel;
-    public AudioMixer mainMixer;
+    [Header("Paneller")]
+    public GameObject settingsPanel;      // Ayarlar Paneli
+    public GameObject modeSelectionPanel; // YENÝ: Mod Seçim Paneli
 
-    [Header("Slider Referanslarý")]
+    [Header("Ses Ayarlarý")]
+    public AudioMixer mainMixer;
     public Slider masterSlider;
     public Slider musicSlider;
 
     void Start()
     {
-        // --- YÜKLEME ÝÞLEMÝ ---
-
-        // 1. Master Sesi Yükle
-        // Eðer kayýt yoksa 0.75 (Yüzde 75) sesle baþla
+        // Ses ayarlarýný hafýzadan yükle (Eski kodun aynýsý)
         float savedMaster = PlayerPrefs.GetFloat("MasterVolume", 0.75f);
+        if (masterSlider != null) masterSlider.value = savedMaster;
+        mainMixer.SetFloat("MasterVol", Mathf.Log10(Mathf.Max(savedMaster, 0.0001f)) * 20);
 
-        if (masterSlider != null)
-        {
-            masterSlider.value = savedMaster; // Slider'ý güncelle
-        }
-
-        // Mixer'ý güncelle (Logaritma hatasýný önlemek için 0.0001 kontrolü)
-        float masterDb = Mathf.Log10(Mathf.Max(savedMaster, 0.0001f)) * 20;
-        mainMixer.SetFloat("MasterVol", masterDb);
-
-        Debug.Log("Master Ses Yüklendi: " + savedMaster); // KONSOLA BAK
-
-
-        // 2. Müzik Sesini Yükle
         float savedMusic = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
+        if (musicSlider != null) musicSlider.value = savedMusic;
+        mainMixer.SetFloat("MusicVol", Mathf.Log10(Mathf.Max(savedMusic, 0.0001f)) * 20);
 
-        if (musicSlider != null)
-        {
-            musicSlider.value = savedMusic;
-        }
-
-        float musicDb = Mathf.Log10(Mathf.Max(savedMusic, 0.0001f)) * 20;
-        mainMixer.SetFloat("MusicVol", musicDb);
-
-        Debug.Log("Müzik Ses Yüklendi: " + savedMusic); // KONSOLA BAK
+        // Baþlangýçta panellerin kapalý olduðundan emin ol
+        if (settingsPanel) settingsPanel.SetActive(false);
+        if (modeSelectionPanel) modeSelectionPanel.SetActive(false);
     }
 
-    // --- SES AYARLARI (KAYITLI) ---
+    // --- OYUN MODU SEÇÝM FONKSÝYONLARI (YENÝ) ---
+
+    // 1. Adým: Ana Menüdeki OYNA butonuna baðlanacak
+    public void OpenModeSelection()
+    {
+        if (modeSelectionPanel != null)
+        {
+            modeSelectionPanel.SetActive(true); // Paneli Aç
+        }
+        else
+        {
+            Debug.LogError("HATA: Mode Selection Panel kutusu boþ! Inspector'dan ata.");
+        }
+    }
+
+    // 2. Adým: Paneldeki "BATTLE ROYALE" butonuna baðlanacak
+    public void PlayBattleRoyale()
+    {
+        PlayerPrefs.SetInt("GameMode", 0); // 0 = Battle Royale
+        SceneManager.LoadScene(1); // Oyun Sahnesini Aç
+    }
+
+    // 2. Adým: Paneldeki "SURVIVAL" butonuna baðlanacak
+    public void PlaySurvival()
+    {
+        PlayerPrefs.SetInt("GameMode", 1); // 1 = Survival
+        SceneManager.LoadScene(1); // Oyun Sahnesini Aç
+    }
+
+    // Paneldeki "X" veya "Geri" butonuna baðlanacak
+    public void CloseModeSelection()
+    {
+        if (modeSelectionPanel != null) modeSelectionPanel.SetActive(false);
+    }
+
+    // --- AYARLAR FONKSÝYONLARI (ESKÝSÝ GÝBÝ) ---
+    public void OpenSettings() { settingsPanel.SetActive(true); }
+    public void CloseSettings() { settingsPanel.SetActive(false); }
 
     public void SetMasterVolume(float volume)
     {
-        // 0 gelirse patlamasýn diye 0.0001 yapýyoruz
-        float volumeDb = Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20;
-
-        mainMixer.SetFloat("MasterVol", volumeDb);
-
-        // Deðiþikliði anýnda kaydet
+        mainMixer.SetFloat("MasterVol", Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20);
         PlayerPrefs.SetFloat("MasterVolume", volume);
-        PlayerPrefs.Save(); // Zorla kaydet
     }
-
     public void SetMusicVolume(float volume)
     {
-        float volumeDb = Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20;
-
-        mainMixer.SetFloat("MusicVol", volumeDb);
-
+        mainMixer.SetFloat("MusicVol", Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20);
         PlayerPrefs.SetFloat("MusicVolume", volume);
-        PlayerPrefs.Save();
     }
-
-    // --- DÝÐERLERÝ ---
-    public void PlayGame() { SceneManager.LoadScene(1); }
-    public void OpenSettings() { settingsPanel.SetActive(true); }
-    public void CloseSettings() { settingsPanel.SetActive(false); }
 }
