@@ -82,7 +82,7 @@ public class ClubEnemyAI : MonoBehaviour
             GameObject club = Instantiate(clubPrefab, firePoint.position, transform.rotation);
 
             // --- GÜCÜ AKTARMA KISMI ---
-            SimpleWeapon weapon = club.GetComponent<SimpleWeapon>();
+            SimpleWeapon weapon = club.GetComponentInChildren<SimpleWeapon>();
             if (weapon != null)
             {
                 weapon.owner = this.gameObject;

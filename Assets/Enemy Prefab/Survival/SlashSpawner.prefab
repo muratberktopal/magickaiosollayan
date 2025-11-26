@@ -121,8 +121,8 @@ GameObject:
   - component: {fileID: 3825802592434530747}
   - component: {fileID: 3446821599789377258}
   - component: {fileID: 3013550074895280803}
-  - component: {fileID: 2100131865650282038}
   - component: {fileID: 3658906454201565633}
+  - component: {fileID: 5901635237645574769}
   m_Layer: 0
   m_Name: SlashSpawner
   m_TagString: Enemy
@@ -294,28 +294,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2100131865650282038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6465511754918608022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7821ead62349b814e969ef3bd81f7c42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SlashEnemyAI
-  moveSpeed: 3.5
-  wanderSpeed: 2
-  detectionRange: 10
-  attackRange: 2.5
-  patrolRange: 6
-  slashPrefab: {fileID: 6389406066330802589, guid: 5ef8d476ac4025a4e85cc5e7c5004889, type: 3}
-  firePoint: {fileID: 9102797307131186097}
-  cooldownTime: 2
-  damageAmount: 10
-  knockbackForce: 5
 --- !u!114 &3658906454201565633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,6 +309,25 @@ MonoBehaviour:
   xpGemPrefab: {fileID: 4377150388562604626, guid: 22269e473047e4748b9810e9f1091686, type: 3}
   dropCount: 5
   spread: 1.5
+--- !u!114 &5901635237645574769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6465511754918608022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1349e54480eb82b46bddf5cfd394711e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalEnemyAI
+  moveSpeed: 3.5
+  attackRange: 2.5
+  weaponPrefab: {fileID: 5972537292604591172, guid: ef8342b1f98d4e84b9fc2f05c5b43367, type: 3}
+  firePoint: {fileID: 9102797307131186097}
+  attackCooldown: 2
+  damage: 10
+  knockback: 5
 --- !u!1 &8127214155624501201
 GameObject:
   m_ObjectHideFlags: 0

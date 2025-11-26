@@ -48,9 +48,13 @@ public class PlayerClubController : MonoBehaviour
 
         // Sahibini ata
         SimpleWeapon weapon = club.GetComponent<SimpleWeapon>();
-        if (weapon != null) weapon.owner = gameObject;
+        // Eðer SimpleWeapon ana objede deðil de çocuðundaysa (HitBox gibi), çocuklarda ara:
+        if (weapon == null) weapon = club.GetComponentInChildren<SimpleWeapon>();
+        if (weapon != null)
+        {
+            weapon.owner = gameObject; // "Sahibin benim" de!
+        }
 
-        
 
         // Sopa vurduktan hemen sonra yok olsun
         Destroy(club, 0.3f);

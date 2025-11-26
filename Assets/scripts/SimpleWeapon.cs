@@ -6,55 +6,49 @@ public class SimpleWeapon : MonoBehaviour
     public int damage = 20;
     public float knockback = 5f;
 
-    [Header("Sahibi")]
+    [Header("Sahibi (Otomatik Bulur)")]
     public GameObject owner;
 
     void Start()
     {
-        // Sahibi otomatik bul
+        // Sahibi elle atanmadýysa, en üstteki ebeveyni (Rigidbody olaný) bulmaya çalýþ
         if (owner == null)
         {
             Rigidbody parentRb = GetComponentInParent<Rigidbody>();
             if (parentRb != null) owner = parentRb.gameObject;
         }
-
-        // KONTROL 1: Silah doðduðunda gücü var mý?
-        Debug.Log($"SÝLAH DOÐDU: {gameObject.name} | Hasar Gücü: {damage} | Sahibi: {(owner != null ? owner.name : "YOK")}");
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // KONTROL 2: Bir þeye deðiyor mu?
-        Debug.Log($"TEMAS VAR: '{gameObject.name}' -> '{other.name}' objesine deðdi.");
+        // 1. SAHÝP KONTROLÜ (Owner yoksa iþlem yapma)
+        if (owner == null) return;
 
-        if (owner != null)
-        {
-            // Kendi sahibine mi deðdi?
-            if (other.gameObject == owner || other.transform.IsChildOf(owner.transform))
-            {
-                // Debug.Log("ÝPTAL: Kendi sahibine deðdi.");
-                return;
-            }
-        }
+        // --- KENDÝNE VURMA KORUMASI (YENÝLENMÝÞ) ---
 
-        // HealthSystem arýyoruz
+        // A. Çarptýðým þey sahibimin kendisi mi?
+        if (other.gameObject == owner) return;
+
+        // B. Çarptýðým þey sahibimin bir parçasý (çocuðu) mý? (Örn: Kolu, bacaðý, modeli)
+        if (other.transform.IsChildOf(owner.transform)) return;
+
+        // -------------------------------------------
+
+        // 3. DOST ATEÞÝ KORUMASI (Ýsteðe Baðlý)
+        // Player Player'a vurmasýn (Kendine vurmayý zaten engelledik ama 2. bir player varsa diye)
+        if (owner.CompareTag("Player") && other.CompareTag("Player")) return;
+
+        // 4. CAN SÝSTEMÝNÝ ARA
         HealthSystem target = other.GetComponent<HealthSystem>();
+
+        // Direkt bulamazsan babasýna (Parent) bak
         if (target == null) target = other.GetComponentInParent<HealthSystem>();
 
+        // 5. HASAR VER
         if (target != null)
         {
-            // KONTROL 3: Hedef bulundu, vuruyoruz!
-            Debug.Log($"VURUÞ YAPILIYOR! Hedef: {target.name}, Vurulan Hasar: {damage}");
-
-            Vector3 sourcePos = transform.position;
-            if (owner != null) sourcePos = owner.transform.position;
-
+            Vector3 sourcePos = owner.transform.position;
             target.TakeDamage(damage, sourcePos, knockback);
-        }
-        else
-        {
-            // KONTROL 4: Deðdik ama caný yok
-            Debug.LogWarning($"HATA: '{other.name}' objesinde 'HealthSystem' scripti bulunamadý!");
         }
     }
 }

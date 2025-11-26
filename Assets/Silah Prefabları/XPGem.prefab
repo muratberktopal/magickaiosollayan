@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8818314479834703912}
   - component: {fileID: -5465317423822171056}
   - component: {fileID: 8810621782059897240}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: XPGem
   m_TagString: Untagged
   m_Icon: {fileID: 0}

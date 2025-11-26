@@ -8,6 +8,8 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerChainController chainScript;
+    public PlayerBoomerangController boomerangScript;
     public PlayerWhipController whipScript;
     public PlayerGreatswordController greatswordScript;
     public PlayerFireballController fireballScript;
@@ -27,6 +29,7 @@ public class WeaponSelector : MonoBehaviour
         // Baþlangýçta hepsini kapat (Çakýþma olmasýn)
         DisableAllWeapons();
     }
+    
 
     // --- SEÇÝM FONKSÝYONLARI ---
     public void SelectWhip()
@@ -128,8 +131,8 @@ public class WeaponSelector : MonoBehaviour
     }
     public void SelectChain()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(chainScript);
+        SetButtonListener(() => chainScript.Attack());
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
     }
@@ -149,8 +152,8 @@ public class WeaponSelector : MonoBehaviour
     }
     public void SelectBoomerang()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(boomerangScript);
+        SetButtonListener(() => boomerangScript.Attack());
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
     }
@@ -181,6 +184,8 @@ public class WeaponSelector : MonoBehaviour
 
     void DisableAllWeapons()
     {
+        if (chainScript) chainScript.enabled = false;
+        if (boomerangScript) boomerangScript.enabled = false;
         if (whipScript) whipScript.enabled = false;
         if (fireballScript) fireballScript.enabled = false;
         if (scytheScript) scytheScript.enabled = false;
