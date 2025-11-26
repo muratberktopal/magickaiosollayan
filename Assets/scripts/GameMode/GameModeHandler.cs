@@ -2,32 +2,49 @@ using UnityEngine;
 
 public class GameModeHandler : MonoBehaviour
 {
-    [Header("Battle Royale Parçalarý")]
-    public GameObject battleRoyaleUI; // "Kalan: 10" yazýsý
-    public BattleRoyaleManager brManager;
+    [Header("BATTLE ROYALE Parçalarý")]
+    public GameObject brSpawnerObject;
+    public GameObject brUI;
+    public BattleRoyaleManager brManagerScript;
 
-    [Header("Survival Parçalarý")]
-    public GameObject survivalTimerUI; // YENÝ: "00:00" yazýsý
+    [Header("SURVIVAL Parçalarý")]
+    public GameObject survivalSpawnerObject;
+    public GameObject survivalUI;
 
     void Start()
     {
+        // 1. KONTROL: Script Çalýþýyor mu?
+        Debug.Log("--- GAMEMODEHANDLER ÇALIÞTI ---");
+
+        // 2. MOD OKUMA: Hafýzada ne var?
         int mode = PlayerPrefs.GetInt("GameMode", 0);
+        Debug.Log("Hafýzadan Okunan Mod: " + (mode == 0 ? "BATTLE ROYALE" : "SURVIVAL"));
 
         if (mode == 0) // BATTLE ROYALE
         {
-            // BR aç, Survival kapat
-            if (battleRoyaleUI) battleRoyaleUI.SetActive(true);
-            if (brManager) brManager.enabled = true;
+            // Açýlacaklar
+            if (brSpawnerObject != null) brSpawnerObject.SetActive(true);
+            else Debug.LogError("HATA: BR Spawner Object kutusu BOÞ!");
 
-            if (survivalTimerUI) survivalTimerUI.SetActive(false); // Saati gizle
+            if (brUI != null) brUI.SetActive(true);
+            if (brManagerScript != null) brManagerScript.enabled = true;
+
+            // Kapanacaklar
+            if (survivalSpawnerObject != null) survivalSpawnerObject.SetActive(false);
+            if (survivalUI != null) survivalUI.SetActive(false);
         }
         else // SURVIVAL
         {
-            // BR kapat, Survival aç
-            if (battleRoyaleUI) battleRoyaleUI.SetActive(false);
-            if (brManager) brManager.enabled = false;
+            // Açýlacaklar
+            if (survivalSpawnerObject != null) survivalSpawnerObject.SetActive(true);
+            else Debug.LogError("HATA: Survival Spawner Object kutusu BOÞ!");
 
-            if (survivalTimerUI) survivalTimerUI.SetActive(true); // Saati göster
+            if (survivalUI != null) survivalUI.SetActive(true);
+
+            // Kapanacaklar
+            if (brSpawnerObject != null) brSpawnerObject.SetActive(false);
+            if (brUI != null) brUI.SetActive(false);
+            if (brManagerScript != null) brManagerScript.enabled = false;
         }
     }
 }
