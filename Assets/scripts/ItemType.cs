@@ -13,6 +13,7 @@ public enum ItemType
     GreatSword,
     Chain,
     Double_Baton,
+    Boomerang,
     //  SOPA+SOPA
 
 

@@ -2990,7 +2990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890bb03e86ebc8a468065dda05bdff81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyaleManager
-  totalEnemies: 0
+  totalEnemies: 20
   enemiesAlive: 0
   aliveText: {fileID: 961196549}
   victoryPanel: {fileID: 1264831715}

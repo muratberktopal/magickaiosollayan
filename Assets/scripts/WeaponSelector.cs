@@ -105,7 +105,79 @@ public class WeaponSelector : MonoBehaviour
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
     }
+    public void SelectGreatSword()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectNunchaku()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectFlail()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectChain()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectDouble_Sided_Sword()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectComposite_bow()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectBoomerang()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+    public void SelectNet()
+    {
+        EnableWeapon(scytheScript);
+        SetButtonListener(() => scytheScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // --- YARDIMCI FONKSÝYONLAR ---
+
 
     void DisableAllWeapons()
     {
