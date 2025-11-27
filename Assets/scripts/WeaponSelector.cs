@@ -12,6 +12,10 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerRazorController razorScript;
+    public PlayerTreeController treeScript;
+    public PlayerNunchakuController nunchakuScript;
+    public PlayerFlailController flailScript;
     public PlayerNetController netScript;
     public PlayerDoubleSwordController doubleSwordScript;
     public PlayerTeslaController teslaScript;
@@ -60,6 +64,13 @@ public class WeaponSelector : MonoBehaviour
 
 
     // --- SEÇÝM FONKSÝYONLARI ---
+    public void SelectTree()
+    {
+        EnableWeapon(treeScript);
+        SetButtonListener(() => treeScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Tree);
+    }
     public void SelectTesla()
     {
         EnableWeapon(teslaScript);
@@ -161,17 +172,19 @@ public class WeaponSelector : MonoBehaviour
     }
     public void SelectNunchaku()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(nunchakuScript);
+        SetButtonListener(() => nunchakuScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Nunchaku); 
     }
     public void SelectFlail()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(flailScript);
+        // Gürz fiziksel olduðu için Attack boþ olabilir ama hata vermemesi için baðlýyoruz
+        SetButtonListener(() => flailScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        // Evolution Manager'a "Ben Gürz seçtim" diyoruz
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Flail);
     }
     public void SelectChain()
     {
@@ -210,11 +223,19 @@ public class WeaponSelector : MonoBehaviour
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Net);
 
-
+        
 
     }
 
+    public void SelectRazor()
+    {
+        EnableWeapon(razorScript);
+        SetButtonListener(() => razorScript.Attack());
 
+        // Evolution Manager'a "Ben Jilet seçtim" diyoruz
+        // (Eðer ItemType enum'ýna Razor eklemediysen hata verebilir, eklemeyi unutma)
+        // EvolutionManager.instance.SetStarterWeapon(ItemType.Razor); 
+    }
 
 
 
@@ -233,6 +254,10 @@ public class WeaponSelector : MonoBehaviour
 
     void DisableAllWeapons()
     {
+        if (razorScript) razorScript.enabled = false;
+        if (treeScript) treeScript.enabled = false;
+        if (nunchakuScript) nunchakuScript.enabled = false;
+        if (flailScript) flailScript.enabled = false;
         if (netScript) netScript.enabled = false;
         if (doubleSwordScript) doubleSwordScript.enabled = false;
         if (teslaScript) teslaScript.enabled = false;

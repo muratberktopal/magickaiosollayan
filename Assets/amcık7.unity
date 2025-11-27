@@ -314,7 +314,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7125623
 Transform:
   m_ObjectHideFlags: 0
@@ -3042,6 +3042,8 @@ MonoBehaviour:
   survivalSpawnerScript: {fileID: 1916847332}
   selectionPanel: {fileID: 1185295005}
   gameAttackButton: {fileID: 650033502}
+  razorScript: {fileID: 0}
+  treeScript: {fileID: 0}
   nunchakuScript: {fileID: 0}
   flailScript: {fileID: 0}
   netScript: {fileID: 0}
@@ -26778,7 +26780,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &924738662
 Transform:
   m_ObjectHideFlags: 0
@@ -63667,6 +63669,7 @@ GameObject:
   - component: {fileID: 2062865259}
   - component: {fileID: 2062865260}
   - component: {fileID: 2062865261}
+  - component: {fileID: 2062865275}
   - component: {fileID: 2062865262}
   - component: {fileID: 2062865264}
   - component: {fileID: 2062865265}
@@ -64117,6 +64120,21 @@ MonoBehaviour:
   forwardOffset: 1.5
   sideSpacing: 0.5
   damage: 15
+--- !u!114 &2062865275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062865246}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14ff571805327c84383d8b049eda4f4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTreeController
+  treePrefab: {fileID: 0}
+  attackRate: 2
+  spawnDistance: 3
 --- !u!1001 &2062999437
 PrefabInstance:
   m_ObjectHideFlags: 0

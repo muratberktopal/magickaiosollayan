@@ -27,7 +27,7 @@ public enum ItemType
     Scythe,
     Net,
     Excalibur,
-    THATSNOTAWEAPONTHATSATREEWTF,
+    Tree,
 
 
 

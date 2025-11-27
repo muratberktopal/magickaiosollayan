@@ -194,7 +194,10 @@ public class EvolutionManager : MonoBehaviour
                 Debug.Log("TIRPAN (SCYTHE) AÇILIYOR!"); // Konsolda bunu görmelisin
                 weaponSelector.SelectBoomerang();
                 break;
-
+            case ItemType.Tree:
+                Debug.Log("TIRPAN (SCYTHE) AÇILIYOR!"); // Konsolda bunu görmelisin
+                weaponSelector.SelectTree();
+                break;
         }
     }
 }
