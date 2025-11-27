@@ -12,6 +12,10 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerNetController netScript;
+    public PlayerDoubleSwordController doubleSwordScript;
+    public PlayerTeslaController teslaScript;
+    public PlayerIceShardController iceScript;
     public PlayerCompositeBowController compositeBowScript;
     public PlayerChainController chainScript;
     public PlayerBoomerangController boomerangScript;
@@ -56,7 +60,21 @@ public class WeaponSelector : MonoBehaviour
 
 
     // --- SEÇÝM FONKSÝYONLARI ---
-    
+    public void SelectTesla()
+    {
+        EnableWeapon(teslaScript);
+        SetButtonListener(() => teslaScript.Attack());
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Lightning);
+    }
+
+    public void SelectIceShard()
+    {
+        EnableWeapon(iceScript);
+        SetButtonListener(() => iceScript.Attack());
+
+        
+         EvolutionManager.instance.SetStarterWeapon(ItemType.IceShard);
+    }
 
     public void SelectWhip()
     {
@@ -164,10 +182,10 @@ public class WeaponSelector : MonoBehaviour
     }
     public void SelectDouble_Sided_Sword()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(doubleSwordScript);
+        SetButtonListener(() => doubleSwordScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Double_Sided_Sword);
     }
     public void SelectComposite_bow()
     {
@@ -187,13 +205,13 @@ public class WeaponSelector : MonoBehaviour
     }
     public void SelectNet()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(netScript);
+        SetButtonListener(() => netScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Net);
 
 
-        
+
     }
 
 
@@ -215,6 +233,10 @@ public class WeaponSelector : MonoBehaviour
 
     void DisableAllWeapons()
     {
+        if (netScript) netScript.enabled = false;
+        if (doubleSwordScript) doubleSwordScript.enabled = false;
+        if (teslaScript) teslaScript.enabled = false;
+        if (iceScript) iceScript.enabled = false;
         if (compositeBowScript) compositeBowScript.enabled = false;
         if (chainScript) chainScript.enabled = false;
         if (boomerangScript) boomerangScript.enabled = false;
