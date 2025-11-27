@@ -41,7 +41,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3634296929883999087, guid: 7179b56398fdda64586578e983da51b6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.830989
+      value: -10.3
       objectReference: {fileID: 0}
     - target: {fileID: 3634296929883999087, guid: 7179b56398fdda64586578e983da51b6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -49,7 +49,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3634296929883999087, guid: 7179b56398fdda64586578e983da51b6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.410978
+      value: -12.52
       objectReference: {fileID: 0}
     - target: {fileID: 3634296929883999087, guid: 7179b56398fdda64586578e983da51b6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -140,6 +140,7 @@ MonoBehaviour:
   attackRange: 3
   normalAttackRate: 2
   normalDamage: 20
+  normalHitEffect: {fileID: 4420231020873507915, guid: 6149e3a0b2720f54987d1e131c1c0676, type: 3}
   skillCooldown: 5
   skillRange: 6
   skillEffectPrefab: {fileID: 4420231020873507915, guid: c387d20282f19ed41869e773d960099e, type: 3}
