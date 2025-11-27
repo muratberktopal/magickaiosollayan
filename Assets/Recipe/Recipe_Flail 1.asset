@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Recipe_Flail 1
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
   resultItem: 14
-  requiredIngredients: 010000000000000002000000
+  requiredIngredients: 0100000001000000

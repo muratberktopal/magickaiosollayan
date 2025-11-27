@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689f508ef98a7284796097ec39b3ee25, type: 3}
   m_Name: Recipe_Great_Whip
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
-  resultItem: 7
-  requiredIngredients: 0000000000000000
+  resultItem: 8
+  requiredIngredients: 0200000002000000

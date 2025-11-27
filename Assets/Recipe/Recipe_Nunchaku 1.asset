@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Recipe_Nunchaku 1
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
   resultItem: 13
-  requiredIngredients: 020000000100000001000000
+  requiredIngredients: 0600000001000000
