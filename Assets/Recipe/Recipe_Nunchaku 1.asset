@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 689f508ef98a7284796097ec39b3ee25, type: 3}
-  m_Name: Recipe_Scythe 2
+  m_Name: Recipe_Nunchaku 1
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
-  resultItem: 16
-  requiredIngredients: 0a00000000000000
+  resultItem: 13
+  requiredIngredients: 020000000100000001000000
