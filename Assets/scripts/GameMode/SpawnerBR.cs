@@ -1,83 +1,76 @@
-using System.Collections;
 using UnityEngine;
 
 public class SpawnerBR : MonoBehaviour
 {
+    [Header("Düþman Havuzu")]
+    public GameObject[] enemyPrefabs; // Rastgele seçilecekler
+    public GameObject bossPrefab;     // Sonuncu (Boss)
+
     [Header("Ayarlar")]
-    public GameObject enemyPrefab;
-    public GameObject bossPrefab;
-    public float spawnRadius = 15f;
+    public float spawnRadius = 30f;   // Harita geniþliðine göre ayarla
 
-    // Player'ý gizli tutuyoruz, kod kendi bulacak
-    private Transform playerTarget;
-    private bool waveStarted = false;
+    // Harita deðiþince MapSwitcher burayý güncelleyecek
+    [HideInInspector] public Vector3 currentMapCenter;
 
-    void OnEnable() // Obje açýldýðý an çalýþýr
+    public void StartBattle()
     {
-        waveStarted = false; // Sýfýrla
-        Debug.Log("SPAWNER BR: Aktif oldu, Player aranýyor...");
+        SpawnAllEnemiesInstant();
     }
 
-    void Update()
+    void SpawnAllEnemiesInstant()
     {
-        // 1. PLAYER BULMA KISMI
-        if (playerTarget == null)
-        {
-            GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null)
-            {
-                playerTarget = p.transform;
-                Debug.Log("SPAWNER BR: Player bulundu! Saldýrý baþlýyor.");
-            }
-            else
-            {
-                // Player yoksa bekle, hata verme
-                return;
-            }
-        }
-
-        // 2. DALGA BAÞLATMA KISMI
-        if (!waveStarted)
-        {
-            StartCoroutine(SpawnWave());
-            waveStarted = true; // Bir daha baþlatma
-        }
-    }
-
-    IEnumerator SpawnWave()
-    {
+        // 1. Sayýyý Manager'dan Al
         int total = 10;
-        // Manager varsa sayýyý al, yoksa 10 devam et
         if (BattleRoyaleManager.instance != null)
             total = BattleRoyaleManager.instance.totalEnemies;
 
-        Debug.Log("SPAWNER BR: " + total + " düþman üretilecek.");
+        Debug.Log("BR BAÞLADI! " + total + " düþman sahneye atýlýyor.");
 
+        // 2. Döngü (Bekleme Yok, Hepsini Sýrayla Bas)
         for (int i = 0; i < total; i++)
         {
-            // Sonuncu düþman Boss olsun
-            GameObject toSpawn = (i == total - 1 && bossPrefab != null) ? bossPrefab : enemyPrefab;
+            GameObject toSpawn = null;
 
-            SpawnUnit(toSpawn);
+            // --- KÝM DOÐACAK? ---
+            // Sonuncu sýradaki BOSS olsun
+            if (i == total - 1 && bossPrefab != null)
+            {
+                toSpawn = bossPrefab;
+            }
+            // Diðerleri rastgele asker olsun
+            else if (enemyPrefabs.Length > 0)
+            {
+                int randomIndex = Random.Range(0, enemyPrefabs.Length);
+                toSpawn = enemyPrefabs[randomIndex];
+            }
 
-            yield return new WaitForSeconds(1.5f);
+            // --- DOÐUR ---
+            if (toSpawn != null)
+            {
+                SpawnUnit(toSpawn);
+            }
         }
-
-        Debug.Log("SPAWNER BR: Tüm düþmanlar doðdu.");
     }
 
     void SpawnUnit(GameObject prefab)
     {
-        if (prefab == null)
+        // Rastgele konum belirle
+        Vector2 rnd = Random.insideUnitCircle * spawnRadius;
+
+        // Eðer MapSwitcher merkezi belirlemediyse (Ýlk açýlýþ), (0,0,0) kabul et
+        if (currentMapCenter == Vector3.zero)
         {
-            Debug.LogError("SPAWNER HATASI: Enemy veya Boss prefabý boþ!");
-            return;
+            // Güvenlik için Player'ý bulup onun etrafýna da atabilirsin ama
+            // Battle Royale'de genelde harita merkezine göre daðýtýlýr.
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) currentMapCenter = p.transform.position;
         }
 
-        Vector2 rnd = Random.insideUnitCircle.normalized * spawnRadius;
-        Vector3 pos = playerTarget.position + new Vector3(rnd.x, 0, rnd.y);
-        pos.y = 0.5f;
+        Vector3 spawnPos = currentMapCenter + new Vector3(rnd.x, 0, rnd.y);
 
-        Instantiate(prefab, pos, Quaternion.identity);
+        // Yükseklik: Havadan býrak (5 metre)
+        spawnPos.y = 1f;
+
+        Instantiate(prefab, spawnPos, Quaternion.identity);
     }
 }
