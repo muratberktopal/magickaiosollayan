@@ -77,4 +77,13 @@ public class BattleRoyaleManager : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
+    public void ResetRound()
+    {
+        enemiesAlive = totalEnemies; // Sayýyý fulle (10'a çek)
+        UpdateUI(); // Yazýyý güncelle ("Kalan: 10")
+
+        if (victoryPanel != null) victoryPanel.SetActive(false); // Zafer ekranýný kapat
+
+        Time.timeScale = 1; // Zamaný tekrar baþlat
+    }
 }

@@ -2,28 +2,31 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class MagicEnemyAI : MonoBehaviour
+public class WhipEnemyAI : MonoBehaviour
 {
     [Header("Hız ve Hareket")]
-    public float moveSpeed = 3.0f;
+    public float moveSpeed = 3.5f;
     public float wanderSpeed = 2.0f;
 
     [Header("Mesafe Ayarları")]
-    public float detectionRange = 12f;
-    public float attackRange = 7f;
+    public float detectionRange = 12f;  // Görme menzili
+    public float attackRange = 4.5f;    // KIRBAÇ MENZİLİ (Kılıçtan uzun, Büyüden kısa)
     public float patrolRange = 6f;
 
     [Header("Saldırı Ayarları")]
-    public GameObject magicBallPrefab;
-    public Transform firePoint;
-    public float cooldownTime = 3f;
+    public GameObject whipPrefab;       // Kırbaç Prefabı (WhipContainer veya WhipAttack)
+    public Transform firePoint;         // Çıkış noktası
+    public float cooldownTime = 2.0f;   // Atıştan sonra bekleme
 
-    // --- YENİ: ENGEL ALGILAMA ---
+    [Header("Güç Ayarları")]
+    public int damageAmount = 15;
+    public float knockbackForce = 5f;
+
     [Header("Engel Algılama")]
     public float obstacleCheckDist = 1.5f;
     public LayerMask obstacleLayer;
-    // ---------------------------
 
+    // Gizli Değişkenler
     private Rigidbody rb;
     private Animator animator;
     private Transform currentTarget;
@@ -42,11 +45,14 @@ public class MagicEnemyAI : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Animasyon
         bool isMoving = rb.linearVelocity.magnitude > 0.1f;
         if (animator != null) animator.SetBool("IsMoving", isMoving);
 
+        // Hedef Bul
         FindClosestTarget();
 
+        // Davranış
         if (isCoolingDown)
         {
             CooldownLogic();
@@ -57,7 +63,7 @@ public class MagicEnemyAI : MonoBehaviour
 
             if (dist <= attackRange)
             {
-                PerformMagicAttack();
+                PerformWhipAttack();
             }
             else
             {
@@ -70,46 +76,42 @@ public class MagicEnemyAI : MonoBehaviour
         }
     }
 
-    // ... (PerformMagicAttack ve FindClosestTarget aynı) ...
-    void PerformMagicAttack()
+    void PerformWhipAttack()
     {
-        rb.linearVelocity = Vector3.zero;
-        if (currentTarget != null) LookAt(currentTarget.position);
+        rb.linearVelocity = Vector3.zero; // Dur
+        if (currentTarget != null) LookAt(currentTarget.position); // Hedefe dön
 
-        if (magicBallPrefab != null && firePoint != null)
+        if (whipPrefab != null && firePoint != null)
         {
-            GameObject magic = Instantiate(magicBallPrefab, firePoint.position, transform.rotation);
+            // Kırbacı oluştur
+            GameObject whip = Instantiate(whipPrefab, firePoint.position, transform.rotation);
 
-            SimpleWeapon weapon = magic.GetComponent<SimpleWeapon>();
+            // Kırbacı düşmana yapıştır (Child yap) ki düşman dönerse kırbaç da dönsün
+            whip.transform.SetParent(this.transform);
+
+            // --- SAHİPLİK VE GÜÇ AYARI ---
+            // Hem ana objede hem çocuklarda ara (Prefab yapına göre değişebilir)
+            SimpleWeapon weapon = whip.GetComponent<SimpleWeapon>();
+            if (weapon == null) weapon = whip.GetComponentInChildren<SimpleWeapon>();
+
             if (weapon != null)
             {
-                weapon.owner = this.gameObject;
-                weapon.damage = 15;
+                weapon.owner = this.gameObject; // "Sahibi benim" de
+                weapon.damage = damageAmount;
+                weapon.knockback = knockbackForce;
             }
+            // -----------------------------
 
-            FireballProjectile projScript = magic.GetComponent<FireballProjectile>();
-            if (projScript != null)
-            {
-                projScript.speed = 17f;
-                projScript.enabled = true;
-            }
-            else
-            {
-                Rigidbody projRb = magic.GetComponent<Rigidbody>();
-                if (projRb != null)
-                {
-                    projRb.isKinematic = false;
-                    projRb.linearVelocity = transform.forward * 8f;
-                }
-            }
-
-            if (AudioManager.instance != null) AudioManager.instance.PlayMagic();
+            // Ses Çal (Özel Kırbaç sesi)
+            if (AudioManager.instance != null) AudioManager.instance.PlayWhip();
         }
 
         isCoolingDown = true;
         cooldownTimer = cooldownTime;
         PickRandomPoint();
     }
+
+    // --- STANDART AI FONKSİYONLARI ---
 
     void FindClosestTarget()
     {
@@ -122,10 +124,15 @@ public class MagicEnemyAI : MonoBehaviour
             if (hit.gameObject == gameObject) continue;
             if (hit.GetComponent<HealthSystem>() == null) continue;
 
+            // Basit Battle Royale mantığı: Herkese saldır
             if (hit.CompareTag("Player") || hit.CompareTag("Enemy"))
             {
                 float d = Vector3.Distance(transform.position, hit.transform.position);
-                if (d < closestDist) { closestDist = d; bestTarget = hit.transform; }
+                if (d < closestDist)
+                {
+                    closestDist = d;
+                    bestTarget = hit.transform;
+                }
             }
         }
         currentTarget = bestTarget;
@@ -137,31 +144,25 @@ public class MagicEnemyAI : MonoBehaviour
     {
         MoveTo(wanderPoint, wanderSpeed);
         if (Vector3.Distance(transform.position, wanderPoint) < 1f) PickRandomPoint();
-
-        // --- YENİ: Engel Kontrolü ---
         DetectObstacle();
     }
 
     void DetectObstacle()
     {
         Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
-        Debug.DrawRay(rayOrigin, transform.forward * obstacleCheckDist, Color.red);
-
         if (Physics.Raycast(rayOrigin, transform.forward, obstacleCheckDist, obstacleLayer))
         {
             PickRandomPoint();
         }
     }
 
-    void MoveTo(Vector3 dest, float speed)
-    {
-        LookAt(dest);
-        Vector3 dir = (dest - transform.position).normalized;
-        Vector3 vel = dir * speed;
-        vel.y = rb.linearVelocity.y;
-        rb.linearVelocity = vel;
-    }
+    void MoveTo(Vector3 d, float s) { LookAt(d); rb.linearVelocity = (d - transform.position).normalized * s; rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z); }
+    void LookAt(Vector3 d) { transform.LookAt(new Vector3(d.x, transform.position.y, d.z)); }
+    void PickRandomPoint() { wanderPoint = transform.position + new Vector3(Random.Range(-patrolRange, patrolRange), 0, Random.Range(-patrolRange, patrolRange)); }
 
-    void LookAt(Vector3 dest) { Vector3 lookPos = new Vector3(dest.x, transform.position.y, dest.z); transform.LookAt(lookPos); }
-    void PickRandomPoint() { float x = Random.Range(-patrolRange, patrolRange); float z = Random.Range(-patrolRange, patrolRange); wanderPoint = transform.position + new Vector3(x, 0, z); }
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.magenta; // Kırbaç menzili Mor olsun
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
 }

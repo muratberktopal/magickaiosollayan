@@ -3425,7 +3425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LootDropper
   xpGemPrefab: {fileID: 4377150388562604626, guid: 22269e473047e4748b9810e9f1091686, type: 3}
-  dropCount: 5
+  dropCount: 0
   spread: 1.5
 --- !u!114 &390424763605915075
 MonoBehaviour:
@@ -3440,13 +3440,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicEnemyAI
   moveSpeed: 3
-  wanderSpeed: 2
+  wanderSpeed: 4
   detectionRange: 12
   attackRange: 7
   patrolRange: 6
   magicBallPrefab: {fileID: 5954177955937732044, guid: 4341b7b4dcfeb8d41b009358c065dee7, type: 3}
   firePoint: {fileID: 3101047881349851330}
   cooldownTime: 3
+  obstacleCheckDist: 2
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &3425765789876048228
 GameObject:
   m_ObjectHideFlags: 0

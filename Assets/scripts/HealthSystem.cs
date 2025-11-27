@@ -102,6 +102,10 @@ public class HealthSystem : MonoBehaviour
         // --- ÖLÜM KISMI (KESÝN ÇALIÞACAK) ---
         if (destroyOnDeath)
         {
+
+            if (HUDManager.instance != null)
+                HUDManager.instance.AddKill();
+
             if (BattleRoyaleManager.instance != null)
                 BattleRoyaleManager.instance.EnemyDied();
 

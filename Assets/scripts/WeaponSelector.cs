@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 public class WeaponSelector : MonoBehaviour
 {
+    [Header("Spawner Referanslarý (YENÝ)")]
+    public SpawnerBR brSpawnerScript;
+    public SpawnerSurvival survivalSpawnerScript;
+
     [Header("UI Elemanlarý")]
     public GameObject selectionPanel; // Baþlangýç paneli
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
@@ -28,8 +32,27 @@ public class WeaponSelector : MonoBehaviour
 
         // Baþlangýçta hepsini kapat (Çakýþma olmasýn)
         DisableAllWeapons();
+
+        int mode = PlayerPrefs.GetInt("GameMode", 0);
+
+        if (mode == 0) // Battle Royale
+        {
+            // Eðer BR Spawner açýksa baþlat
+            if (brSpawnerScript != null && brSpawnerScript.gameObject.activeInHierarchy)
+            {
+                brSpawnerScript.StartBattle();
+            }
+        }
+        else // Survival
+        {
+            // Eðer Survival Spawner açýksa baþlat
+            if (survivalSpawnerScript != null && survivalSpawnerScript.gameObject.activeInHierarchy)
+            {
+                survivalSpawnerScript.StartBattle();
+            }
+        }
     }
-    
+
 
     // --- SEÇÝM FONKSÝYONLARI ---
     public void SelectWhip()
@@ -54,7 +77,7 @@ public class WeaponSelector : MonoBehaviour
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Slash);
     }
-    
+
     public void SelectClub() // SOPA
     {
         EnableWeapon(clubScript);
@@ -85,7 +108,7 @@ public class WeaponSelector : MonoBehaviour
         EvolutionManager.instance.SetStarterWeapon(ItemType.Spear);
     }
 
-    
+
     public void SelectChaos()
     {
         EnableWeapon(chaosScript);
@@ -218,5 +241,26 @@ public class WeaponSelector : MonoBehaviour
     {
         selectionPanel.SetActive(false);
         Time.timeScale = 1;
+
+        // --- EKSÝK OLAN KISIM BURASI ---
+        // Hangi modda olduðumuzu kontrol et
+        int mode = PlayerPrefs.GetInt("GameMode", 0);
+
+        if (mode == 0) // Battle Royale
+        {
+            // BR Spawner açýksa ve atanmýþsa baþlat
+            if (brSpawnerScript != null && brSpawnerScript.gameObject.activeInHierarchy)
+            {
+                brSpawnerScript.StartBattle();
+            }
+        }
+        else // Survival
+        {
+            // Survival Spawner açýksa ve atanmýþsa baþlat
+            if (survivalSpawnerScript != null && survivalSpawnerScript.gameObject.activeInHierarchy)
+            {
+                survivalSpawnerScript.StartBattle();
+            }
+        }
     }
 }

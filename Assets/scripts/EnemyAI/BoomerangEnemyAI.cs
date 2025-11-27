@@ -2,32 +2,31 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class SlashEnemyAI : MonoBehaviour
+public class BoomerangEnemyAI : MonoBehaviour
 {
-    [Header("HÄ±z AyarlarÄ±")]
-    public float moveSpeed = 3.5f;
-    public float wanderSpeed = 2f;
+    [Header("Hýz ve Hareket")]
+    public float moveSpeed = 4.0f;      // Orta hýz
+    public float wanderSpeed = 2.0f;
 
-    [Header("Mesafe AyarlarÄ±")]
-    public float detectionRange = 10f;
-    public float attackRange = 2.5f;
+    [Header("Mesafe Ayarlarý")]
+    public float detectionRange = 12f;  // Görme menzili
+    public float attackRange = 7f;      // Atýþ menzili (Orta mesafe)
     public float patrolRange = 6f;
 
-    [Header("SaldÄ±rÄ± AyarlarÄ±")]
-    public GameObject slashPrefab;
-    public Transform firePoint;
-    public float cooldownTime = 2f;
+    [Header("Saldýrý Ayarlarý")]
+    public GameObject boomerangPrefab;  // Bumerang Prefabý (Player için yaptýðýný kullan)
+    public Transform firePoint;         // Çýkýþ noktasý
+    public float cooldownTime = 3f;     // Atýþtan sonra bekleme
 
-    [Header("GÃ¼Ã§ AyarlarÄ±")]
-    public int damageAmount = 10;
+    [Header("Güç Ayarlarý")]
+    public int damageAmount = 15;
     public float knockbackForce = 5f;
 
-    // --- YENÄ°: ENGEL ALGILAMA ---
-    [Header("Engel AlgÄ±lama")]
+    [Header("Engel Algýlama")]
     public float obstacleCheckDist = 1.5f;
     public LayerMask obstacleLayer;
-    // ---------------------------
 
+    // Gizli Deðiþkenler
     private Rigidbody rb;
     private Animator animator;
     private Transform currentTarget;
@@ -46,11 +45,14 @@ public class SlashEnemyAI : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Animasyon
         bool isMoving = rb.linearVelocity.magnitude > 0.1f;
         if (animator != null) animator.SetBool("IsMoving", isMoving);
 
+        // Hedef Bul
         FindClosestTarget();
 
+        // Davranýþ
         if (isCoolingDown)
         {
             CooldownLogic();
@@ -61,7 +63,7 @@ public class SlashEnemyAI : MonoBehaviour
 
             if (dist <= attackRange)
             {
-                PerformSlashAttack();
+                PerformBoomerangAttack();
             }
             else
             {
@@ -74,33 +76,36 @@ public class SlashEnemyAI : MonoBehaviour
         }
     }
 
-    // ... (PerformSlashAttack ve FindClosestTarget aynÄ±) ...
-    void PerformSlashAttack()
+    void PerformBoomerangAttack()
     {
-        if (AudioManager.instance != null) AudioManager.instance.PlaySlash();
+        rb.linearVelocity = Vector3.zero; // Dur
+        if (currentTarget != null) LookAt(currentTarget.position); // Hedefe dön
 
-        rb.linearVelocity = Vector3.zero;
-        if (currentTarget != null) LookAt(currentTarget.position);
-
-        if (slashPrefab != null && firePoint != null)
+        if (boomerangPrefab != null && firePoint != null)
         {
-            Quaternion rotasyon = Quaternion.Euler(90, transform.eulerAngles.y, 0);
-            GameObject slash = Instantiate(slashPrefab, firePoint.position, rotasyon);
+            // Bumerangý oluþtur (Düþmanýn baktýðý yöne doðru)
+            GameObject boomerang = Instantiate(boomerangPrefab, firePoint.position, transform.rotation);
 
-            SimpleWeapon weapon = slash.GetComponent<SimpleWeapon>();
+            // --- SAHÝPLÝK VE GÜÇ AYARI (Çok Önemli) ---
+            SimpleWeapon weapon = boomerang.GetComponent<SimpleWeapon>();
             if (weapon != null)
             {
-                weapon.owner = this.gameObject;
+                weapon.owner = this.gameObject; // "Bu bumerang BENÝM" de (Geri ona dönsün)
                 weapon.damage = damageAmount;
                 weapon.knockback = knockbackForce;
             }
-            Destroy(slash, 0.3f);
+            // ------------------------------------------
+
+            // Ses Çal (Slash sesi veya özel bumerang sesi)
+            if (AudioManager.instance != null) AudioManager.instance.PlaySlash();
         }
 
         isCoolingDown = true;
         cooldownTimer = cooldownTime;
         PickRandomPoint();
     }
+
+    // --- STANDART AI FONKSÝYONLARI ---
 
     void FindClosestTarget()
     {
@@ -110,42 +115,38 @@ public class SlashEnemyAI : MonoBehaviour
 
         foreach (Collider hit in hits)
         {
-            if (hit.gameObject == gameObject) continue;
-            if (hit.GetComponent<HealthSystem>() == null) continue;
+            if (hit.gameObject == gameObject) continue; // Kendini geç
+            if (hit.GetComponent<HealthSystem>() == null) continue; // Caný olmayaný geç
 
+            // Player veya Enemy ise hedef al (Battle Royale mantýðý)
             if (hit.CompareTag("Player") || hit.CompareTag("Enemy"))
             {
                 float d = Vector3.Distance(transform.position, hit.transform.position);
-                if (d < closestDist) { closestDist = d; bestTarget = hit.transform; }
+                if (d < closestDist)
+                {
+                    closestDist = d;
+                    bestTarget = hit.transform;
+                }
             }
         }
         currentTarget = bestTarget;
     }
 
-    void CooldownLogic()
-    {
-        cooldownTimer -= Time.fixedDeltaTime;
-        WanderBehavior();
-        if (cooldownTimer <= 0) isCoolingDown = false;
-    }
+    void CooldownLogic() { cooldownTimer -= Time.fixedDeltaTime; WanderBehavior(); if (cooldownTimer <= 0) isCoolingDown = false; }
 
     void WanderBehavior()
     {
         MoveTo(wanderPoint, wanderSpeed);
         if (Vector3.Distance(transform.position, wanderPoint) < 1f) PickRandomPoint();
-
-        // --- YENÄ°: Engel KontrolÃ¼ ---
         DetectObstacle();
     }
 
     void DetectObstacle()
     {
         Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
-        Debug.DrawRay(rayOrigin, transform.forward * obstacleCheckDist, Color.red);
-
         if (Physics.Raycast(rayOrigin, transform.forward, obstacleCheckDist, obstacleLayer))
         {
-            PickRandomPoint(); // Duvar gÃ¶rÃ¼nce yÃ¶n deÄŸiÅŸtir
+            PickRandomPoint();
         }
     }
 
@@ -155,9 +156,7 @@ public class SlashEnemyAI : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

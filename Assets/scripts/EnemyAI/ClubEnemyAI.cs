@@ -15,13 +15,16 @@ public class ClubEnemyAI : MonoBehaviour
     public float attackRange = 2.0f;
     public float cooldownTime = 2.5f;
 
-    // --- YENİ EKLENEN KISIM (HASAR AYARLARI) ---
-    [Header("Güç Ayarları (Buradan Değiştir)")]
-    public int damageAmount = 15;    // Kaç vuracak?
-    public float knockbackForce = 8f; // Ne kadar itecek?
-    // -------------------------------------------
+    [Header("Güç Ayarları")]
+    public int damageAmount = 15;
+    public float knockbackForce = 8f;
 
-    // Gizli Değişkenler
+    // --- YENİ EKLENEN: ENGEL ALGILAMA ---
+    [Header("Engel Algılama")]
+    public float obstacleCheckDist = 1.5f; // Ne kadar önünü kontrol etsin?
+    public LayerMask obstacleLayer;        // Neyi engel saysın? (Duvar, Default vb.)
+    // ------------------------------------
+
     private Rigidbody rb;
     private Animator animator;
     private Transform currentTarget;
@@ -59,6 +62,7 @@ public class ClubEnemyAI : MonoBehaviour
             }
             else
             {
+                // Kovalarken de duvara toslamasın
                 MoveTo(currentTarget.position, moveSpeed);
             }
         }
@@ -68,37 +72,27 @@ public class ClubEnemyAI : MonoBehaviour
         }
     }
 
+    // ... (PerformClubAttack aynı kalıyor) ...
     void PerformClubAttack()
     {
-        if (AudioManager.instance != null)
-        {
-            AudioManager.instance.PlayClub(); // Sopa sesi çağırıyoruz
-        }
+        if (AudioManager.instance != null) AudioManager.instance.PlayClub();
+
         rb.linearVelocity = Vector3.zero;
         if (currentTarget != null) LookAt(currentTarget.position);
 
         if (clubPrefab != null && firePoint != null)
         {
             GameObject club = Instantiate(clubPrefab, firePoint.position, transform.rotation);
-
-            // --- GÜCÜ AKTARMA KISMI ---
             SimpleWeapon weapon = club.GetComponentInChildren<SimpleWeapon>();
             if (weapon != null)
             {
                 weapon.owner = this.gameObject;
-
-                // Prefab'ın kendi hasarını boşver, bizim yazdığımızı kullan:
-                weapon.damage = damageAmount;       // Inspector'dan gelen hasar
-                weapon.knockback = knockbackForce;  // Inspector'dan gelen itme gücü
+                weapon.damage = damageAmount;
+                weapon.knockback = knockbackForce;
             }
-            // --------------------------
-
             Destroy(club, 0.4f);
 
-            if (AudioManager.instance != null)
-            {
-                AudioManager.instance.PlayClub(); // <--- SOPA SESİ
-            }
+            if (AudioManager.instance != null) AudioManager.instance.PlayClub();
         }
 
         isCoolingDown = true;
@@ -106,7 +100,6 @@ public class ClubEnemyAI : MonoBehaviour
         PickRandomPoint();
     }
 
-    // --- YARDIMCI FONKSİYONLAR (Aynı) ---
     void FindClosestTarget()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange);
@@ -127,9 +120,52 @@ public class ClubEnemyAI : MonoBehaviour
         currentTarget = bestTarget;
     }
 
-    void CooldownLogic() { cooldownTimer -= Time.fixedDeltaTime; WanderBehavior(); if (cooldownTimer <= 0) isCoolingDown = false; }
-    void WanderBehavior() { MoveTo(wanderPoint, wanderSpeed); if (Vector3.Distance(transform.position, wanderPoint) < 1f) PickRandomPoint(); }
-    void MoveTo(Vector3 d, float s) { LookAt(d); rb.linearVelocity = (d - transform.position).normalized * s; rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z); }
+    void CooldownLogic()
+    {
+        cooldownTimer -= Time.fixedDeltaTime;
+        WanderBehavior();
+        if (cooldownTimer <= 0) isCoolingDown = false;
+    }
+
+    void WanderBehavior()
+    {
+        MoveTo(wanderPoint, wanderSpeed);
+
+        // Hedefe vardık mı?
+        if (Vector3.Distance(transform.position, wanderPoint) < 1f)
+        {
+            PickRandomPoint();
+        }
+
+        // --- YENİ: Önümde duvar var mı? ---
+        DetectObstacle();
+        // ----------------------------------
+    }
+
+    // --- YENİ FONKSİYON: Engel Algılama ---
+    void DetectObstacle()
+    {
+        // Işını yerden biraz yukarıdan atıyoruz
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
+
+        // Scene ekranında kırmızı çizgi çiz (Debug için)
+        Debug.DrawRay(rayOrigin, transform.forward * obstacleCheckDist, Color.red);
+
+        // Önümüzde "Obstacle Layer"a ait bir şey var mı?
+        if (Physics.Raycast(rayOrigin, transform.forward, obstacleCheckDist, obstacleLayer))
+        {
+            // Duvar var! Hemen yeni bir yere dön.
+            PickRandomPoint();
+        }
+    }
+
+    void MoveTo(Vector3 d, float s)
+    {
+        LookAt(d);
+        rb.linearVelocity = (d - transform.position).normalized * s;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z);
+    }
+
     void LookAt(Vector3 d) { transform.LookAt(new Vector3(d.x, transform.position.y, d.z)); }
     void PickRandomPoint() { wanderPoint = transform.position + new Vector3(Random.Range(-6f, 6f), 0, Random.Range(-6f, 6f)); }
 }
