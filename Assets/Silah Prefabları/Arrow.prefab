@@ -13,8 +13,6 @@ GameObject:
   - component: {fileID: 2856034690458589768}
   - component: {fileID: 4666913566188134322}
   - component: {fileID: 4276472956487477353}
-  - component: {fileID: 1212446256879061919}
-  - component: {fileID: 2616996752272723893}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -31,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 4484953423328440795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -271.55, y: 2.71, z: -19.03}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 2}
+  m_LocalPosition: {x: -271.55, y: 2.7185, z: -19.037}
+  m_LocalScale: {x: 0.2173553, y: 0.17567787, z: 2.4808}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9133761952516259951}
@@ -138,39 +136,10 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1212446256879061919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4484953423328440795}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d31da4de97bd654584a92a0ab0759ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimpleWeapon
-  damage: 20
-  knockback: 5
-  owner: {fileID: 0}
---- !u!114 &2616996752272723893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4484953423328440795}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ae5673b3e714f04fbe777552755c34a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArrowProjectile
-  speed: 40
-  lifeTime: 100
 --- !u!1001 &3895464431669427774
 PrefabInstance:
   m_ObjectHideFlags: 0

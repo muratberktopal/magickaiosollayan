@@ -1,18 +1,21 @@
 using UnityEngine;
 
-public class PlayerBowController : MonoBehaviour
+public class PlayerCompositeBowController : MonoBehaviour
 {
-    [Header("Gerekli ParÃ§alar")]
-    public GameObject arrowPrefab;
-    public GameObject bowVisualPrefab;
+    [Header("Gerekli Parçalar")]
+    public GameObject arrowPrefab;     // Ok Prefabý
+    public GameObject bowVisualPrefab; // Yay Görseli
     private GameObject currentBowVisual;
 
     [Header("Ayarlar")]
-    public float attackRate = 0.8f;
-    public float spawnHeight = 1.2f;   // Yerden yÃ¼kseklik
-    public float forwardOffset = 1.0f; // Karakterden ne kadar uzakta doÄŸsun?
+    public float attackRate = 1.0f;    // Çoklu attýðý için biraz yavaþ olsun
+    public float spawnHeight = 1.2f;   // Yükseklik
+    public float forwardOffset = 1.0f; // Mesafe
 
-    public int damage = 20;
+    [Header("Yaylým Ayarlarý")]
+    public float spreadAngle = 15f;    // Oklar arasýndaki açý (Derece)
+
+    public int damage = 15; // Tek okun hasarý
 
     private float nextAttackTime = 0f;
 
@@ -34,10 +37,7 @@ public class PlayerBowController : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Attack();
-        }
+        if (Input.GetKeyDown(KeyCode.Space)) Attack();
 #endif
     }
 
@@ -45,12 +45,12 @@ public class PlayerBowController : MonoBehaviour
     {
         if (Time.time >= nextAttackTime)
         {
-            // 1. Ã–NE ATEÅž (Karakterin kendi yÃ¶nÃ¼)
-            CreateArrow(transform.rotation);
+            // 1. ÖN CEPHE (3 OK)
+            FireVolley(transform.rotation);
 
-            // 2. ARKAYA ATEÅž (Karakterin tersi)
+            // 2. ARKA CEPHE (3 OK)
             Quaternion backRotation = transform.rotation * Quaternion.Euler(0, 180, 0);
-            CreateArrow(backRotation);
+            FireVolley(backRotation);
 
             if (AudioManager.instance != null) AudioManager.instance.PlayMagic();
 
@@ -58,24 +58,34 @@ public class PlayerBowController : MonoBehaviour
         }
     }
 
+    // Yaylým ateþi yapan fonksiyon
+    void FireVolley(Quaternion baseRotation)
+    {
+        // Döngü: -1 (Sol), 0 (Orta), 1 (Sað)
+        for (int i = -1; i <= 1; i++)
+        {
+            // Açýyý hesapla (Örn: -15, 0, 15)
+            float currentAngle = i * spreadAngle;
+
+            // Ana yöne bu açýyý ekle
+            Quaternion arrowRot = baseRotation * Quaternion.Euler(0, currentAngle, 0);
+
+            CreateArrow(arrowRot);
+        }
+    }
+
     void CreateArrow(Quaternion rotationDir)
     {
         if (arrowPrefab == null) return;
 
-        // --- MATEMATÄ°KSEL DÃœZELTME ---
-        // Okun doÄŸacaÄŸÄ± yeri hesapla:
-        // Merkez + YÃ¼kseklik + (GideceÄŸi YÃ¶n * Mesafe)
-        // rotationDir * Vector3.forward demek: "O aÃ§Ä±nÄ±n baktÄ±ÄŸÄ± ileri yÃ¶n" demektir.
+        // Pozisyonu hesapla (Açýlý yöne doðru ileri git)
         Vector3 spawnPos = transform.position + (Vector3.up * spawnHeight) + (rotationDir * Vector3.forward * forwardOffset);
 
-        // Oku oluÅŸtur
         GameObject arrow = Instantiate(arrowPrefab, spawnPos, rotationDir);
 
-        // Hareketi BaÅŸlat
         ArrowProjectile arrowScript = arrow.GetComponent<ArrowProjectile>();
         if (arrowScript != null) arrowScript.enabled = true;
 
-        // HasarÄ± Aktar
         SimpleWeapon weapon = arrow.GetComponent<SimpleWeapon>();
         if (weapon != null)
         {

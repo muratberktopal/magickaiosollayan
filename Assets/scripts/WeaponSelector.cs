@@ -12,6 +12,7 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerCompositeBowController compositeBowScript;
     public PlayerChainController chainScript;
     public PlayerBoomerangController boomerangScript;
     public PlayerWhipController whipScript;
@@ -55,6 +56,8 @@ public class WeaponSelector : MonoBehaviour
 
 
     // --- SEÇÝM FONKSÝYONLARI ---
+    
+
     public void SelectWhip()
     {
         EnableWeapon(whipScript);
@@ -168,10 +171,12 @@ public class WeaponSelector : MonoBehaviour
     }
     public void SelectComposite_bow()
     {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
+        EnableWeapon(compositeBowScript);
+        SetButtonListener(() => compositeBowScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Composite_bow);
     }
     public void SelectBoomerang()
     {
@@ -186,6 +191,9 @@ public class WeaponSelector : MonoBehaviour
         SetButtonListener(() => scytheScript.Attack());
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+
+
+        
     }
 
 
@@ -207,6 +215,7 @@ public class WeaponSelector : MonoBehaviour
 
     void DisableAllWeapons()
     {
+        if (compositeBowScript) compositeBowScript.enabled = false;
         if (chainScript) chainScript.enabled = false;
         if (boomerangScript) boomerangScript.enabled = false;
         if (whipScript) whipScript.enabled = false;

@@ -142,7 +142,7 @@ public class UpgradeManager : MonoBehaviour
             if (spear) spear.attackRate -= card.value;
 
             var bow = player.GetComponent<PlayerBowController>();
-            if (bow) bow.fireRate -= card.value;
+            if (bow) bow.attackRate -= card.value;
 
             var club = player.GetComponent<PlayerClubController>();
             if (club) club.attackRate -= card.value;
