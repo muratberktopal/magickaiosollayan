@@ -14,6 +14,8 @@ public enum ItemType
     Chain,
     Double_Baton,
     Boomerang,
+    Razor,
+
     //  SOPA+SOPA
 
 
@@ -28,6 +30,7 @@ public enum ItemType
     Net,
     Excalibur,
     Tree,
+    Buzzsaw,
 
 
 

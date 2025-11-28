@@ -12,6 +12,7 @@ public class WeaponSelector : MonoBehaviour
     public Button gameAttackButton;   // Sað alttaki saldýrý butonu
 
     [Header("Player Silah Kodlarý")]
+    public PlayerBuzzsawController buzzsawScript;
     public PlayerRazorController razorScript;
     public PlayerTreeController treeScript;
     public PlayerNunchakuController nunchakuScript;
@@ -64,6 +65,21 @@ public class WeaponSelector : MonoBehaviour
 
 
     // --- SEÇÝM FONKSÝYONLARI ---
+    public void SelectBuzzsaw()
+    {
+        EnableWeapon(buzzsawScript);
+        SetButtonListener(() => buzzsawScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Buzzsaw); 
+    }
+    public void SelectRazor()
+    {
+        EnableWeapon(razorScript);
+        SetButtonListener(() => razorScript.Attack());
+
+       
+         EvolutionManager.instance.SetStarterWeapon(ItemType.Razor); 
+    }
     public void SelectTree()
     {
         EnableWeapon(treeScript);
@@ -227,15 +243,7 @@ public class WeaponSelector : MonoBehaviour
 
     }
 
-    public void SelectRazor()
-    {
-        EnableWeapon(razorScript);
-        SetButtonListener(() => razorScript.Attack());
-
-        // Evolution Manager'a "Ben Jilet seçtim" diyoruz
-        // (Eðer ItemType enum'ýna Razor eklemediysen hata verebilir, eklemeyi unutma)
-        // EvolutionManager.instance.SetStarterWeapon(ItemType.Razor); 
-    }
+    
 
 
 
@@ -254,6 +262,7 @@ public class WeaponSelector : MonoBehaviour
 
     void DisableAllWeapons()
     {
+        if (buzzsawScript) buzzsawScript.enabled = false;
         if (razorScript) razorScript.enabled = false;
         if (treeScript) treeScript.enabled = false;
         if (nunchakuScript) nunchakuScript.enabled = false;
