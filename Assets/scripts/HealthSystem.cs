@@ -92,14 +92,15 @@ public class HealthSystem : MonoBehaviour
         {
             LootDropper looter = GetComponent<LootDropper>();
             if (looter != null) looter.DropLoot();
+
+            HealthDropper hpDropper = GetComponent<HealthDropper>();
+            if (hpDropper != null) hpDropper.CheckDrop();
         }
         catch (System.Exception e)
         {
             Debug.LogError("Loot Düþürme Hatasý: " + e.Message);
         }
-        // ---------------------------------------
-
-        // --- ÖLÜM KISMI (KESÝN ÇALIÞACAK) ---
+       
         if (destroyOnDeath)
         {
 
@@ -113,7 +114,7 @@ public class HealthSystem : MonoBehaviour
         }
         else
         {
-            // Playersa Game Over
+            
             if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
             gameObject.SetActive(false);
         }
