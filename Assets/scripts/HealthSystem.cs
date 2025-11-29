@@ -8,59 +8,56 @@ public class HealthSystem : MonoBehaviour
     public int currentHealth;
     public bool destroyOnDeath = true;
 
-    [Header("UI Referanslarý")]
-    public Image healthBarFill;
-    public GameObject healthCanvas;
+    [Header("UI Baðlantýlarý")]
+    public GameObject healthCanvasPrefab;
+    public float heightOffset = 3.0f;     // YÜKSELTÝLDÝ: Daha yukarýda dursun
 
-    private Camera mainCam;
+    // Gizli Deðiþkenler
+    private Image healthBarFill;
+    private GameObject currentCanvas;
 
     void Start()
     {
         currentHealth = maxHealth;
-        mainCam = Camera.main;
+
+        if (healthCanvasPrefab != null)
+        {
+            // ÖNEMLÝ DEÐÝÞÝKLÝK:
+            // Son parametre 'null'. Yani bar karakterin Çocuðu OLMUYOR.
+            // Böylece karakterin titremesinden etkilenmez.
+            currentCanvas = Instantiate(healthCanvasPrefab, transform.position, Quaternion.identity, null);
+
+            // Billboard scriptine "Beni takip et" diyoruz
+            Billboard billboard = currentCanvas.GetComponent<Billboard>();
+            if (billboard != null)
+            {
+                billboard.target = this.transform;        // Hedef benim
+                billboard.offset = new Vector3(0, heightOffset, 0); // Yükseklik
+            }
+
+            // Fill objesini bul
+            Transform fillObj = currentCanvas.transform.Find("Background/Fill");
+            if (fillObj == null) fillObj = currentCanvas.transform.Find("Fill");
+
+            if (fillObj != null)
+                healthBarFill = fillObj.GetComponent<Image>();
+        }
+
         UpdateUI();
     }
 
-    void LateUpdate()
-    {
-        if (healthCanvas != null && mainCam != null)
-        {
-            healthCanvas.transform.LookAt(transform.position + mainCam.transform.forward);
-        }
-    }
+    // LateUpdate sildik çünkü artýk Billboard.cs her þeyi hallediyor.
 
     public void TakeDamage(int damage, Vector3 attackerPos, float knockbackForce)
     {
-
-        // 1. CANI AZALT
         currentHealth -= damage;
         if (currentHealth < 0) currentHealth = 0;
 
-        // 2. HASAR YAZISI (Hata Çýkarsa Yoksay ve Devam Et)
-        try
-        {
-            if (FloatingTextManager.instance != null)
-            {
-                FloatingTextManager.instance.ShowDamage(damage, transform.position);
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Hasar Yazýsý Hatasý (Önemli Deðil): " + e.Message);
-        }
-        if (FloatingTextManager.instance != null)
-        {
-            // Düþmanýn olduðu yerde hasar yazýsýný çýkar
-            FloatingTextManager.instance.ShowDamage(damage, transform.position);
-        }
-        // 3. UI GÜNCELLE
-        try
-        {
-            if (healthBarFill != null) UpdateUI();
-        }
-        catch (System.Exception) { }
+        UpdateUI();
 
-        // 4. GERÝ TEPME
+        if (FloatingTextManager.instance != null)
+            FloatingTextManager.instance.ShowDamage(damage, transform.position);
+
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -69,11 +66,7 @@ public class HealthSystem : MonoBehaviour
             rb.AddForce(dir * knockbackForce, ForceMode.Impulse);
         }
 
-        // 5. ÖLÜM KONTROLÜ
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        if (currentHealth <= 0) Die();
     }
 
     public void Heal(int amount)
@@ -83,46 +76,29 @@ public class HealthSystem : MonoBehaviour
         UpdateUI();
     }
 
-    void Die()
+    void UpdateUI()
     {
-        Debug.Log(gameObject.name + " ÖLÜYOR...");
-
-        // --- LOOT KISMI (Hata Çýkarsa Yoksay) ---
-        try
+        if (healthBarFill != null)
         {
-            LootDropper looter = GetComponent<LootDropper>();
-            if (looter != null) looter.DropLoot();
-
-            HealthDropper hpDropper = GetComponent<HealthDropper>();
-            if (hpDropper != null) hpDropper.CheckDrop();
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Loot Düþürme Hatasý: " + e.Message);
-        }
-       
-        if (destroyOnDeath)
-        {
-
-            if (HUDManager.instance != null)
-                HUDManager.instance.AddKill();
-
-            if (BattleRoyaleManager.instance != null)
-                BattleRoyaleManager.instance.EnemyDied();
-
-            Destroy(gameObject); // Düþmansa YOK ET
-        }
-        else
-        {
-            
-            if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
-            gameObject.SetActive(false);
+            float fillAmount = (float)currentHealth / maxHealth;
+            healthBarFill.fillAmount = fillAmount;
         }
     }
 
-    void UpdateUI()
+    void Die()
     {
-        float fillAmount = (float)currentHealth / maxHealth;
-        healthBarFill.fillAmount = fillAmount;
+        LootDropper looter = GetComponent<LootDropper>();
+        if (looter != null) looter.DropLoot();
+
+        if (destroyOnDeath)
+        {
+            if (BattleRoyaleManager.instance != null) BattleRoyaleManager.instance.EnemyDied();
+            Destroy(gameObject);
+        }
+        else
+        {
+            if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
+            gameObject.SetActive(false);
+        }
     }
 }
