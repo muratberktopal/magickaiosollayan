@@ -4,7 +4,7 @@ using System.Collections.Generic; // Listeler için þart
 [System.Serializable]
 public class BossEvent
 {
-    public string name;         // Hatýrlatýcý isim (Örn: "Dakika 5 Bossu")
+    public string name;         // Hatýrlatýcý isim (Örn: "Dakika 2 Minotaur")
     public GameObject bossPrefab;
     public float spawnTime;     // Kaçýncý saniyede çýksýn?
     [HideInInspector] public bool spawned = false; // Doðdu mu kontrolü
@@ -33,12 +33,13 @@ public class SpawnerSurvival : MonoBehaviour
     // Zamaný gelince yukarýdaki havuza eklenecekler
     public List<TimeBasedEnemy> unlockableEnemies;
 
-    [Header("3. Elite Düþman Ayarý")]
-    public GameObject elitePrefab;
-    [Range(0, 100)] public float eliteSpawnChance = 5f; // %5 Þans
+    [Header("3. Elite Düþman Havuzu (YENÝLENMÝÞ)")]
+    // Buraya istediðin kadar farklý Elite prefabý ekle
+    public List<GameObject> eliteEnemyPool;
+    [Range(0, 100)] public float eliteSpawnChance = 5f; // Her spawn'da %5 ihtimalle Elite gelir
 
     [Header("4. Boss Takvimi")]
-    // Zamaný gelince doðacak bosslar
+    // Zamaný gelince doðacak bosslar listesi
     public List<BossEvent> bossSpawns;
 
     // Gizli Deðiþkenler
@@ -47,6 +48,7 @@ public class SpawnerSurvival : MonoBehaviour
     private bool isBattleStarted = false;
     private float survivalTimer = 0f; // Savaþ baþladýðýndan beri geçen süre
 
+    // WeaponSelector bunu çaðýracak
     public void StartBattle()
     {
         isBattleStarted = true;
@@ -55,6 +57,7 @@ public class SpawnerSurvival : MonoBehaviour
 
     void Update()
     {
+        // Savaþ baþlamadýysa dur
         if (!isBattleStarted) return;
 
         // Player Bulma
@@ -68,7 +71,7 @@ public class SpawnerSurvival : MonoBehaviour
         // --- ZAMANI ÝLERLET ---
         survivalTimer += Time.deltaTime;
 
-        // 1. BOSS KONTROLÜ
+        // 1. BOSS KONTROLÜ (Listeyi tara)
         CheckBossSpawns();
 
         // 2. YENÝ DÜÞMAN KÝLÝDÝ AÇMA
@@ -80,7 +83,6 @@ public class SpawnerSurvival : MonoBehaviour
             SpawnRoutine();
 
             // Ýstersen zamanla spawn hýzýný artýrabilirsin (Zorluk)
-            // Örn: Her 60 saniyede spawnRate 0.1 azalsýn (Min 0.5)
             // spawnRate = Mathf.Max(0.5f, 2f - (survivalTimer / 60f) * 0.1f);
 
             nextSpawnTime = Time.time + spawnRate;
@@ -89,30 +91,34 @@ public class SpawnerSurvival : MonoBehaviour
 
     void SpawnRoutine()
     {
+        // Eðer havuz boþsa hata vermesin diye dön
         if (activeEnemyPool.Count == 0) return;
 
         // Pozisyon Belirle
         Vector2 rnd = Random.insideUnitCircle.normalized * spawnRadius;
         Vector3 pos = playerTarget.position + new Vector3(rnd.x, 0, rnd.y);
-        pos.y = 0.5f;
+        pos.y = 0.5f; // Yükseklik
 
         GameObject prefabToSpawn = null;
 
-        // --- ELITE KONTROLÜ ---
-        // 0 ile 100 arasý zar at, þanstan küçükse Elite doður
-        if (elitePrefab != null && Random.Range(0f, 100f) < eliteSpawnChance)
+        // --- ELITE KONTROLÜ (YENÝ) ---
+        // Elite havuzunda eleman varsa VE Zar tutarsa
+        if (eliteEnemyPool.Count > 0 && Random.Range(0f, 100f) < eliteSpawnChance)
         {
-            prefabToSpawn = elitePrefab;
-            // Debug.Log("Elite Düþman Doðdu!");
+            // Elite havuzundan rastgele bir tane seç
+            int randomEliteIndex = Random.Range(0, eliteEnemyPool.Count);
+            prefabToSpawn = eliteEnemyPool[randomEliteIndex];
+            // Debug.Log("Elite Düþman Sahneye Ýndi!");
         }
         else
         {
             // --- NORMAL SEÇÝM ---
-            // Havuzdan rastgele bir düþman seç
+            // Normal havuzdan rastgele bir düþman seç
             int randomIndex = Random.Range(0, activeEnemyPool.Count);
             prefabToSpawn = activeEnemyPool[randomIndex];
         }
 
+        // Yarat
         if (prefabToSpawn != null)
         {
             Instantiate(prefabToSpawn, pos, Quaternion.identity);
@@ -121,12 +127,14 @@ public class SpawnerSurvival : MonoBehaviour
 
     void CheckBossSpawns()
     {
+        // Tüm boss listesini kontrol et
         foreach (var boss in bossSpawns)
         {
+            // Eðer daha önce doðmadýysa VE zamaný geldiyse
             if (!boss.spawned && survivalTimer >= boss.spawnTime)
             {
                 SpawnBoss(boss.bossPrefab);
-                boss.spawned = true;
+                boss.spawned = true; // Tik at, bir daha doðmasýn
                 Debug.Log("BOSS ZAMANI: " + boss.name);
             }
         }
@@ -140,17 +148,20 @@ public class SpawnerSurvival : MonoBehaviour
             {
                 activeEnemyPool.Add(enemyInfo.enemyPrefab);
                 enemyInfo.added = true;
-                Debug.Log("YENÝ DÜÞMAN EKLENDÝ: " + enemyInfo.name);
+                Debug.Log("HAVUZA YENÝ DÜÞMAN EKLENDÝ: " + enemyInfo.name);
             }
         }
     }
 
     void SpawnBoss(GameObject bossPrefab)
     {
-        // Boss biraz daha uzakta doðsun
+        if (bossPrefab == null) return;
+
+        // Boss biraz daha uzakta doðsun (Spawn Radius + 5m)
         Vector2 rnd = Random.insideUnitCircle.normalized * (spawnRadius + 5f);
         Vector3 pos = playerTarget.position + new Vector3(rnd.x, 0, rnd.y);
         pos.y = 0.5f;
+
         Instantiate(bossPrefab, pos, Quaternion.identity);
     }
 }
