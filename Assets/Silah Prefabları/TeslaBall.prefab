@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 5694216509864134880}
   - component: {fileID: 979245391164101093}
   - component: {fileID: 6412577495179203702}
+  - component: {fileID: 8524540086818391669}
+  - component: {fileID: 5497833833379416172}
   m_Layer: 0
   m_Name: TeslaBall
   m_TagString: Untagged
@@ -107,7 +109,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -235,8 +237,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0702041d49d52684589acbb3d94bd6fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeslaProjectile
-  speed: 5
-  lifeTime: 4
+  speed: 10
+  lifeTime: 3
   zapRange: 4
-  zapRate: 0.2
+  zapRate: 0.3
   damage: 5
+--- !u!54 &8524540086818391669
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5090639639025556494}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &5497833833379416172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5090639639025556494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d31da4de97bd654584a92a0ab0759ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleWeapon
+  damage: 20
+  knockback: 5
+  owner: {fileID: 0}

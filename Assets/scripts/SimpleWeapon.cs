@@ -18,9 +18,12 @@ public class SimpleWeapon : MonoBehaviour
             if (parentRb != null) owner = parentRb.gameObject;
         }
     }
+   
 
     private void OnTriggerEnter(Collider other)
     {
+        
+
         // 1. SAHÝP KONTROLÜ (Owner yoksa iþlem yapma)
         if (owner == null) return;
 

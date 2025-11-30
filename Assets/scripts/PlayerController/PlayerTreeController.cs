@@ -6,8 +6,8 @@ public class PlayerTreeController : MonoBehaviour
     public GameObject treePrefab; // Aðaç Prefabý
 
     [Header("Ayarlar")]
-    public float attackRate = 2.0f;    // Yavaþ ama güçlü
-    public float spawnDistance = 3.0f; // Karakterin 3 metre önüne düþsün
+    public float attackRate = 2.0f;
+    public float spawnDistance = 4.0f; // Karakterin 4 metre önüne
 
     private float nextAttackTime = 0f;
 
@@ -32,18 +32,27 @@ public class PlayerTreeController : MonoBehaviour
     {
         if (treePrefab == null) return;
 
-        // Düþeceði Yer: Karakterin önü + Zemin seviyesi (Y=0 varsayýyoruz)
-        Vector3 groundPos = transform.position + (transform.forward * spawnDistance);
-        groundPos.y = 0f; // Yere sabitle
+        // 1. POZÝSYON: Karakterin Önü
+        // Mesafe ayarý (En az 4 metre)
+        float finalDistance = Mathf.Max(spawnDistance, 4.0f);
+        Vector3 groundPos = transform.position + (transform.forward * finalDistance);
+        groundPos.y = 0f; // Yeri hedefle
 
-        // Aðacý oluþtur (Script onu otomatik havaya kaldýrýp indirecek)
-        GameObject tree = Instantiate(treePrefab, groundPos, Quaternion.identity);
+        // 2. ROTASYON: YATAY YAPMA (Ýþte burasý eksikti!)
+        // Karakterin yönünü al + 90 derece öne yatýr
+        Quaternion horizontalRot = transform.rotation * Quaternion.Euler(90, 0, 0);
 
-        // Sahibini ata (SimpleWeapon çocukta olabilir)
+        // 3. OLUÞTUR
+        GameObject tree = Instantiate(treePrefab, groundPos, horizontalRot);
+
+        // Sahibini ata
         SimpleWeapon weapon = tree.GetComponentInChildren<SimpleWeapon>();
         if (weapon != null)
         {
             weapon.owner = gameObject;
         }
+
+        // Ses
+        if (AudioManager.instance != null) AudioManager.instance.PlayClub();
     }
 }

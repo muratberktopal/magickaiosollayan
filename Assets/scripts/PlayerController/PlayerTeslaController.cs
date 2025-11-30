@@ -30,10 +30,14 @@ public class PlayerTeslaController : MonoBehaviour
     {
         if (teslaPrefab == null) return;
 
-        // Topu oluþtur
-        Instantiate(teslaPrefab, firePoint.position, firePoint.rotation);
+        // Karakterin merkezinden deðil, bel hizasýndan (Y+1) çýkar
+        Vector3 spawnPos = transform.position + (Vector3.up * 1.2f) + (transform.forward * 1.0f);
 
-        // Ses (Varsa elektrik sesi)
+        // Rotasyonu sýfýrla (Karakterin baktýðý yöne baksýn ama eðilmesin)
+        Quaternion spawnRot = Quaternion.LookRotation(transform.forward);
+
+        Instantiate(teslaPrefab, spawnPos, spawnRot);
+
         if (AudioManager.instance != null) AudioManager.instance.PlayMagic();
     }
 }
