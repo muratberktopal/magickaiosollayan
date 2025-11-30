@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689f508ef98a7284796097ec39b3ee25, type: 3}
   m_Name: Recipe_Nunchaku 1
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
-  resultItem: 13
+  resultItem: 14
   requiredIngredients: 0600000001000000

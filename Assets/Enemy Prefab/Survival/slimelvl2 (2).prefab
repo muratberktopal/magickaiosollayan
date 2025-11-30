@@ -205,6 +205,7 @@ GameObject:
   - component: {fileID: 7713122308720715312}
   - component: {fileID: 5621362270265678803}
   - component: {fileID: 4139518494908946956}
+  - component: {fileID: 4624161302891852261}
   m_Layer: 0
   m_Name: slimelvl2 (2)
   m_TagString: Untagged
@@ -330,6 +331,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthDropper
   healthPotionPrefab: {fileID: 7023889621118750779, guid: 5c46c9567601b7e458fd3e04db869f76, type: 3}
   dropChance: 10
+--- !u!114 &4624161302891852261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4051457687703735202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e99b0348f83893c45ab960cc129ac148, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  xpGemPrefab: {fileID: 4377150388562604626, guid: 22269e473047e4748b9810e9f1091686, type: 3}
+  dropCount: 5
+  spread: 1.5
 --- !u!1 &4572456615194936471
 GameObject:
   m_ObjectHideFlags: 0

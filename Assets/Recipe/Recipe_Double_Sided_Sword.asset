@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689f508ef98a7284796097ec39b3ee25, type: 3}
   m_Name: Recipe_Double_Sided_Sword
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
-  resultItem: 10
+  resultItem: 12
   requiredIngredients: 000000000000000001000000
