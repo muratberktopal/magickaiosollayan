@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: club
   description: combine with club
-  icon: {fileID: 21300000, guid: d7f1f64739addb34bac997cb63cfe714, type: 3}
+  icon: {fileID: 21300000, guid: e4092206b5695184db8b861e85e85012, type: 3}
   upgradeType: 4
   value: 0
   itemReward: 1

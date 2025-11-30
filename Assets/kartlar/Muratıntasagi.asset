@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: arm day
   description: damage up
-  icon: {fileID: 21300000, guid: 0ffceffd6bd2bac4ba905b11caf23556, type: 3}
+  icon: {fileID: 21300000, guid: 74ed3f4465d8e024f9129e1dd457df60, type: 3}
   upgradeType: 1
   value: 30
   itemReward: 0

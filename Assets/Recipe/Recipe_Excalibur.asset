@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689f508ef98a7284796097ec39b3ee25, type: 3}
   m_Name: Recipe_Excalibur
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
-  resultItem: 17
+  resultItem: 19
   requiredIngredients: 000000000000000000000000

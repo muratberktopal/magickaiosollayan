@@ -34,6 +34,7 @@ public class WeaponSelector : MonoBehaviour
     public PlayerSpearController spearScript; // Mýzrak (Spear)
     public PlayerMagicCaster magicScript;     // Büyü (Magic)
     public PlayerClubController clubScript;   // Sopa (Club)
+    public PlayerExcaliburController excaliburScript;
 
     void Start()
     {
@@ -62,7 +63,7 @@ public class WeaponSelector : MonoBehaviour
             }
         }
     }
-
+    
 
     // --- SEÇÝM FONKSÝYONLARI ---
     public void SelectBuzzsaw()
@@ -72,6 +73,16 @@ public class WeaponSelector : MonoBehaviour
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Buzzsaw); 
     }
+
+    public void SelectExcalibur()
+    {
+        EnableWeapon(excaliburScript);
+        SetButtonListener(() => razorScript.Attack());
+
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Excalibur);
+    }
+
     public void SelectRazor()
     {
         EnableWeapon(razorScript);
@@ -107,11 +118,15 @@ public class WeaponSelector : MonoBehaviour
     {
         EnableWeapon(whipScript);
         SetButtonListener(() => whipScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Rope);
     }
-    public void SelectGreatsword()
+    public void SelectGreatSword()
     {
         EnableWeapon(greatswordScript);
         SetButtonListener(() => greatswordScript.Attack());
+
+        EvolutionManager.instance.SetStarterWeapon(ItemType.GreatSword);
     }
     public void SelectFireball()
     {
@@ -139,13 +154,6 @@ public class WeaponSelector : MonoBehaviour
         SetButtonListener(() => magicScript.Attack());
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Staff);
-    }
-
-    public void SelectRope() // BÜYÜ
-    {
-        // BURA DOLCAK SONRA
-
-
     }
 
     public void SelectSpear() // MIZRAK
@@ -179,13 +187,6 @@ public class WeaponSelector : MonoBehaviour
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
     }
-    public void SelectGreatSword()
-    {
-        EnableWeapon(scytheScript);
-        SetButtonListener(() => scytheScript.Attack());
-
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
-    }
     public void SelectNunchaku()
     {
         EnableWeapon(nunchakuScript);
@@ -207,7 +208,7 @@ public class WeaponSelector : MonoBehaviour
         EnableWeapon(chainScript);
         SetButtonListener(() => chainScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Chain);
     }
     public void SelectDouble_Sided_Sword()
     {
@@ -230,7 +231,7 @@ public class WeaponSelector : MonoBehaviour
         EnableWeapon(boomerangScript);
         SetButtonListener(() => boomerangScript.Attack());
 
-        EvolutionManager.instance.SetStarterWeapon(ItemType.Scythe);
+        EvolutionManager.instance.SetStarterWeapon(ItemType.Boomerang);
     }
     public void SelectNet()
     {
@@ -239,9 +240,9 @@ public class WeaponSelector : MonoBehaviour
 
         EvolutionManager.instance.SetStarterWeapon(ItemType.Net);
 
-        
-
     }
+
+    
 
     
 

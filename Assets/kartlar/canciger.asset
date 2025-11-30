@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: dinner break!
   description: max health up
-  icon: {fileID: 21300000, guid: a495e7a5a454d5c4889fa880c65afb3e, type: 3}
+  icon: {fileID: 21300000, guid: db672e3e5d72d6f4487825451efc3898, type: 3}
   upgradeType: 2
   value: 150
   itemReward: 0

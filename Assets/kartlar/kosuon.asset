@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: comfy boots
   description: movement speed up
-  icon: {fileID: 21300000, guid: 826b3753a2c828e409dd3da6077ca75c, type: 3}
+  icon: {fileID: 21300000, guid: 3de6a4e48418bd647b61a82ddeeb856c, type: 3}
   upgradeType: 0
-  value: 20
+  value: 5
   itemReward: 0

@@ -3049,7 +3049,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LootDropper
   xpGemPrefab: {fileID: 4377150388562604626, guid: 22269e473047e4748b9810e9f1091686, type: 3}
-  dropCount: 0
+  dropCount: 5
   spread: 1.5
 --- !u!114 &5076955309330578603
 MonoBehaviour:
