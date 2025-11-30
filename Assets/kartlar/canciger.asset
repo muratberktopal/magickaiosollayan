@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65109509133cbf14ab7b79db23f5f870, type: 3}
   m_Name: canciger
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: yemek vakti!
-  description: canartio
+  upgradeName: dinner break!
+  description: max health up
   icon: {fileID: 21300000, guid: a495e7a5a454d5c4889fa880c65afb3e, type: 3}
   upgradeType: 2
-  value: 3434
+  value: 150
+  itemReward: 0

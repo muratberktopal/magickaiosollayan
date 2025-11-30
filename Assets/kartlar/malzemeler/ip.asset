@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65109509133cbf14ab7b79db23f5f870, type: 3}
   m_Name: ip
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: ip
-  description: ip
-  icon: {fileID: 0}
+  upgradeName: rope
+  description: combine with rope
+  icon: {fileID: 21300000, guid: 36747630035a57844882f9e0d517f276, type: 3}
   upgradeType: 4
   value: 0
   itemReward: 2

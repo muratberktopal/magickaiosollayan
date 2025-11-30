@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65109509133cbf14ab7b79db23f5f870, type: 3}
   m_Name: sopa
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: sopa
-  description: sopa
-  icon: {fileID: 0}
+  upgradeName: club
+  description: combine with club
+  icon: {fileID: 21300000, guid: d7f1f64739addb34bac997cb63cfe714, type: 3}
   upgradeType: 4
   value: 0
   itemReward: 1

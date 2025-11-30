@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65109509133cbf14ab7b79db23f5f870, type: 3}
   m_Name: "Murat\u0131ntasagi"
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: murattasak
-  description: murat toplari
+  upgradeName: arm day
+  description: damage up
   icon: {fileID: 21300000, guid: 0ffceffd6bd2bac4ba905b11caf23556, type: 3}
   upgradeType: 1
-  value: 2222
+  value: 30
+  itemReward: 0

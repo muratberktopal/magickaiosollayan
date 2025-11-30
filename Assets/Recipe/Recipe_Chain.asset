@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Recipe_Chain
   m_EditorClassIdentifier: Assembly-CSharp::MergeRecipe
   resultItem: 8
-  requiredIngredients: 0000000002000000
+  requiredIngredients: 0200000002000000
